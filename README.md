@@ -1,3 +1,3 @@
 ## HADOOP
 
-WordCount单词计数Hadoop程序
+Hadoop编程范例程序
