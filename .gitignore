@@ -1,8 +1,9 @@
 /.idea
 /target
-algorithm.iml
-/.settings
 *.iml
+.settings/
 .classpath
 .project
-docs/~$hadoop.docx
+/docs
+/logs
+resources/
