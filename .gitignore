@@ -6,3 +6,4 @@
 .project
 /logs/*
 /docs/~$*.docx
+/target
