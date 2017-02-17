@@ -20,10 +20,10 @@ import java.io.IOException;
 /**
  * Created by saber on 2017/2/16.
  */
-public class Dedup extends Configured implements Tool {
+public class Dedup1 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new Dedup(), args);
+        int res = ToolRunner.run(new Configuration(), new Dedup1(), args);
 
         System.exit(res);
     }
@@ -37,13 +37,13 @@ public class Dedup extends Configured implements Tool {
         Configuration conf = getConf();
 
         Job job = new Job(conf, "Job_Dedup");
-        job.setJarByClass(Dedup.class);
+        job.setJarByClass(Dedup1.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        job.setMapperClass(Dedup.Map.class);
-        job.setReducerClass(Dedup.Reduce.class);
+        job.setMapperClass(Dedup1.Map.class);
+        job.setReducerClass(Dedup1.Reduce.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(Text.class);           // 指定输出的key的格式
         job.setOutputValueClass(NullWritable.class); // 指定输出的value的格式
