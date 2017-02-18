@@ -1,21 +1,35 @@
 package com.nothankyou.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
- * Created by saber on 2017/2/16.
+ * Created by saber on 2017/2/6.
+ * md5:128bit
  */
 public class Md5Util {
 
-    public static String MD5Digest() {
-        return "";
-    }
+   public static String getMd5(byte[] bytes) {
+	   try {
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(bytes);
+		byte[] md5Bytes = md.digest();
+		
+		return bytesToHexString(md5Bytes);
+	} catch (NoSuchAlgorithmException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();	
+		return "get md5 error";
+	} 
+   }
 
-    private static String bytesToHexString(byte[] byteArr) {
-        String strDigest = "";
-        for (int i = 0; i < byteArr.length; i++) {
-            strDigest += byteToHexString(byteArr[i]);
+    private static String bytesToHexString(byte[] bytes) {
+        String hex = "";
+        for (int i = 0; i < bytes.length; i++) {
+            hex += byteToHexString(bytes[i]);
         }
 
-        return strDigest;
+        return hex;
     }
 
     private static String byteToHexString(byte b) {

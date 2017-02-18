@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.nothankyou.demo;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -17,7 +17,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 电话清单倒排索引
+ * 电话清单倒排索引Test Program
  */
 public class Test2 extends Configured implements Tool {
 

@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.nothankyou.demo;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -9,6 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -28,8 +29,9 @@ public class Test1 extends Configured implements Tool {
     private static Logger log = LoggerFactory.getLogger(Test1.class);
 
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new Test1(), args);
-
+    	
+    	Configuration conf = new Configuration();
+        int res = ToolRunner.run(conf, new Test1(), args);
         System.exit(res);
     }
 
@@ -68,12 +70,13 @@ public class Test1 extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         job.setMapperClass(Map.class);
+        job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);          // 指定输出的key的格式
         job.setOutputValueClass(Text.class);                // 指定输出的value的格式
 
         job.waitForCompletion(true);
-
+        
         return job.isSuccessful() ? 0 : 1;
     }
 }

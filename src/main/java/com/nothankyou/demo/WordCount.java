@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.nothankyou.demo;
 
 /**
  * Created by 哓哓 on 2016/7/6 0006.

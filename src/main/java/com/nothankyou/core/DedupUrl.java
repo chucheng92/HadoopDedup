@@ -18,12 +18,13 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * Created by saber on 2017/2/16.
+ * Created by saber on 2017/2/3.
+ * dedup huge urls
  */
-public class Dedup1 extends Configured implements Tool {
+public class DedupUrl extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new Dedup1(), args);
+        int res = ToolRunner.run(new Configuration(), new DedupUrl(), args);
 
         System.exit(res);
     }
@@ -37,13 +38,13 @@ public class Dedup1 extends Configured implements Tool {
         Configuration conf = getConf();
 
         Job job = new Job(conf, "Job_Dedup");
-        job.setJarByClass(Dedup1.class);
+        job.setJarByClass(DedupUrl.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-        job.setMapperClass(Dedup1.Map.class);
-        job.setReducerClass(Dedup1.Reduce.class);
+        job.setMapperClass(DedupUrl.Map.class);
+        job.setReducerClass(DedupUrl.Reduce.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setOutputKeyClass(Text.class);           // 指定输出的key的格式
         job.setOutputValueClass(NullWritable.class); // 指定输出的value的格式

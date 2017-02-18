@@ -1,17 +1,15 @@
 package com.nothankyou.core;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * pre-process work for using sequence file
@@ -21,20 +19,25 @@ import org.apache.hadoop.io.IOUtils;
  * @author taoxiaoran
  * @date 2017-2-9
  */
-public class HDFSFileList {
-	
+public class HDFSFileUtil {
+
+	private static Logger logger = LoggerFactory.getLogger(HDFSFileUtil.class);
+
 	private static final String BINARY_FILE_PATH = "/usr/local/hadoop/imgset";
-	
+
 	private static final String KV_FILE_PATH = "/usr/local/hadoop/kv_file.txt";
-	
-	private  static long fileCounter = 0L;
-	
+
+	private static long fileCounter = 0L;
+
 	public static void main(String[] args) {
 		FileSystem fs = null;
 
 		Configuration conf = new Configuration();
 		conf.set("fs.default.name", "hdfs://Master.Hadoop:9000");
-		// conf.set("dfs.replication", "1");
+		// make sure client side replication equals 1
+		// if not, even if the hdfs-site.xml replication equals 1, 
+		// the replication of this file in hdfs equals 3 either
+		conf.set("dfs.replication", "1");
 
 		try {
 			fs = FileSystem.get(URI.create("hdfs://Master.Hadoop:9000"), conf);
@@ -71,13 +74,13 @@ public class HDFSFileList {
 					showFiles(fs, files[i].getPath());
 				} else {
 					String filePath = files[i].getPath().toString();
-					fsout.write((filePath+"\n").getBytes());
+					fsout.write((filePath + "\n").getBytes());
 					fileCounter++;
 				}
 			}
 			fsout.close();
-			System.out.println("generate kv file, Done!");
-			System.out.println("the number of file:" + fileCounter);
+			logger.info("generate kv file, Done!");
+			logger.info("the number of file:" + fileCounter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
