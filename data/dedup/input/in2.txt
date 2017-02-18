@@ -1,5 +1,0 @@
-hello hadoop
-hello hadoop5
-hello hadoop34
-hello hadoop2
-hello hadoop1

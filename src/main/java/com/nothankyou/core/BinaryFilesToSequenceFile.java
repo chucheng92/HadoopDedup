@@ -36,11 +36,14 @@ public class BinaryFilesToSequenceFile extends Configured implements Tool{
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
-			System.err.println("Usage: BinaryFilesToSequenceFile <in Path for img_url file> <out path for sequence file>");
+			System.err.println("Usage: BinaryFilesToSequenceFile <in path for img_url file> <out path for sequence file>");
 			System.exit(2);
 		}
 		
-		int res = ToolRunner.run(new Configuration(), new BinaryFilesToSequenceFile(), args);
+		Configuration conf = new Configuration();
+		conf.set("fs.default.name", "hdfs://Master.Hadoop:9000");
+//		conf.set("dfs.replication", "1");
+		int res = ToolRunner.run(conf, new BinaryFilesToSequenceFile(), args);
 		
 		System.exit(res);
 	}
@@ -80,7 +83,7 @@ public class BinaryFilesToSequenceFile extends Configured implements Tool{
 			
 			String uri = value.toString();
 			Configuration conf = new Configuration();
-			FileSystem fs = FileSystem.get(URI.create(uri), conf);
+			final FileSystem fs = FileSystem.get(URI.create(uri), conf);
 			FSDataInputStream fsin = null;
 			try {
 				fsin = fs.open(new Path(uri));
