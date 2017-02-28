@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.ryan.core;
 
 import java.io.IOException;
 
@@ -6,7 +6,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -18,7 +17,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import com.nothankyou.util.Md5Util;
+import com.ryan.util.Md5Util;
 
 public class ImageDeduplicator extends Configured implements Tool {
 

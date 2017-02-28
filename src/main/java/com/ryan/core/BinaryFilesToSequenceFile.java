@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.ryan.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

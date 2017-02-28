@@ -1,4 +1,4 @@
-package com.nothankyou.util;
+package com.ryan.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

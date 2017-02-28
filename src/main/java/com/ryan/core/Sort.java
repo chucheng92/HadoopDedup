@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.ryan.core;
 
 /**
  * Created by 哓哓 on 2016/9/6 0006.

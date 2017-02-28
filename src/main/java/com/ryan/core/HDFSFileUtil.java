@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.ryan.core;
 
 import java.io.IOException;
 import java.net.URI;

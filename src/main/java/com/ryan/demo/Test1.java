@@ -1,4 +1,4 @@
-package com.nothankyou.demo;
+package com.ryan.demo;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

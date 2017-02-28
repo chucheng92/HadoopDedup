@@ -1,4 +1,4 @@
-package com.nothankyou.core;
+package com.ryan.core;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
