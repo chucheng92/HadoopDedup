@@ -17,7 +17,8 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 电话清单倒排索引Test Program
+ * 电话清单倒排索引 
+ * Test Program
  */
 public class Test2 extends Configured implements Tool {
 

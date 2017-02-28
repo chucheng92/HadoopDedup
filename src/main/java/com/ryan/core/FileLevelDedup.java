@@ -19,11 +19,11 @@ import org.apache.hadoop.util.ToolRunner;
 
 import com.ryan.util.Md5Util;
 
-public class ImageDeduplicator extends Configured implements Tool {
+public class FileLevelDedup extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		int res = ToolRunner.run(conf, new ImageDeduplicator(), args);
+		int res = ToolRunner.run(conf, new FileLevelDedup(), args);
 		
 		System.exit(res);
 	}
@@ -34,7 +34,7 @@ public class ImageDeduplicator extends Configured implements Tool {
 
 	// input-key is image file-path
 	// input-value is image binary-content
-	private static class ImageDedupMapper extends
+	private static class FileLevelDedupMapper extends
 			Mapper<Text, BytesWritable, Text, Text> {
 
 		@Override
@@ -50,7 +50,7 @@ public class ImageDeduplicator extends Configured implements Tool {
 		}
 	}
 
-	private static class ImageDedupReducer extends
+	private static class FileLevelDedupReducer extends
 			Reducer<Text, Text, Text, Text> {
 		@Override
 		protected void reduce(Text key, Iterable<Text> values,
@@ -69,10 +69,10 @@ public class ImageDeduplicator extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		Configuration conf = getConf();
 
-		Job job = new Job(conf, "Job_ImageDeduplicator");
-		job.setJarByClass(ImageDeduplicator.class);
-		job.setMapperClass(ImageDedupMapper.class);
-		job.setReducerClass(ImageDedupReducer.class);
+		Job job = new Job(conf, "Job_FileLevelDeduplicator");
+		job.setJarByClass(FileLevelDedup.class);
+		job.setMapperClass(FileLevelDedupMapper.class);
+		job.setReducerClass(FileLevelDedupReducer.class);
 		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));

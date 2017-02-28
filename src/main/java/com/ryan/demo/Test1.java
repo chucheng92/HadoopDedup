@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * Mac地址测试程序
  *
- * @author 哓哓
+ * @author Ryan Tao
  */
 public class Test1 extends Configured implements Tool {
 

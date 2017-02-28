@@ -18,7 +18,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * Created by saber on 2017/2/3.
+ * Created by Ryan Tao on 2017/2/3.
  * dedup huge urls
  */
 public class DedupUrl extends Configured implements Tool {

@@ -24,23 +24,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * this class make all of small files(imgs) -> one sequence file
+ * this class make all of small files(e.g. imgs) -> one sequence file
  * 
- * input:one single img kv file(included more img paths) output:one single
- * sequence file
+ * input:one single kv file(included more file paths) 
+ * output:one single sequence file
  * 
- * @author taoxiaoran
+ * @author Ryan Tao
  * @date 2017-2-6
  */
 public class BinaryFilesToSequenceFile extends Configured implements Tool {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(BinaryFilesToSequenceFile.class);
+	private static Logger logger = LoggerFactory.getLogger(BinaryFilesToSequenceFile.class);
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
-			System.err
-					.println("Usage: BinaryFilesToSequenceFile <in path for kv file> <out path for sequence file>");
+			System.err.println("Usage: BinaryFilesToSequenceFile <in path for kv file> <out path for sequence file>");
 			System.exit(2);
 		}
 

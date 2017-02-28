@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * 
  * generate file_path(value) kv file
  * 
- * @author taoxiaoran
+ * @author Ryan Tao
  * @date 2017-2-9
  */
 public class HDFSFileUtil {
