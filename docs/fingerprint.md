@@ -1,0 +1,1 @@
+id | hashValue | fileNum | chunkNum | chunkSize | file | offset

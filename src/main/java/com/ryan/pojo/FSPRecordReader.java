@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ryan.util.Constant;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,11 +18,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ryan.util.Md5Util;
-
-public class CDCRecordReader extends RecordReader<IntWritable, ChunkInfo> {
+/**
+ * FSP 固定分块算法
+ * @author Ryan Tao
+ * @website http://taoxiaoran.top
+ */
+public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	
-	private static final Logger log = LoggerFactory.getLogger(CDCRecordReader.class);
+	private static final Logger log = LoggerFactory.getLogger(FSPRecordReader.class);
 	
 	private Configuration conf;
 	private FileSystem fs;
@@ -33,37 +37,45 @@ public class CDCRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	private long pos;
 	private long end;
 	private byte[] buffer; //file content
-	private int chunkSize = 4 * 1024;
+	private int chunkSize = Constant.DEFAULT_CHUNK_SIZE;
 	private int chunkId;
 	private byte[] tempBytes = new byte[2];
 	private IntWritable key = new IntWritable(0);
-	private ChunkInfo value = new ChunkInfo(0, chunkSize, 0, 0, tempBytes, " ", " ");
+	private ChunkInfo value = new ChunkInfo(0, chunkSize, 0, 0, tempBytes
+            , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME);
 	private List<Long> list = new ArrayList<>();
 	
-	public CDCRecordReader() {
+	public FSPRecordReader() {
+        log.debug("called:FSPRecordReader Default Constructor");
 		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	public void initialize(InputSplit split, TaskAttemptContext context)
 			throws IOException, InterruptedException {
+
+        log.debug("called:initialize");
+
 		// TODO Auto-generated method stub
 		conf = context.getConfiguration();
 		this.fileSplit = (FileSplit)split;
 		this.filePath = this.fileSplit.getPath();
 		this.chunkId = 0;
 		this.start = fileSplit.getStart();
-		this.pos = this.start;
+        this.end = start + split.getLength();
+        this.pos = this.start;
 		
 		try {
 			this.fs = filePath.getFileSystem(conf);
 			this.fileName = this.filePath.toString();
-			log.info("fileName={}", fileName);
-			this.fsin = fs.open(filePath);
+
+            log.info("fileName={}", fileName);
+
+            this.fsin = fs.open(filePath);
 			fsin.seek(start);
 			// read file from fsin to output stream
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			buffer = new byte[4*1024];
+			buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
 			int flag = 0;
 			while ((flag = fsin.read(buffer)) != -1) {
 				out.write(buffer);
@@ -78,7 +90,7 @@ public class CDCRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 		this.markChunkPostition(buffer, chunkSize);
 	}
 	
-	// generate chunk position and storage in list
+	// generate chunk position and storage it in list
 	private void markChunkPostition(byte[] bytes, int size) {
 		// TODO Auto-generated method stub
 		int chunkNum = bytes.length / size + 1;
@@ -95,40 +107,51 @@ public class CDCRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	@Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
+
+        log.debug("called:nextKeyValue");
+
 		int currentPos = this.chunkId;
 		this.chunkId++;
 		if ((currentPos + 1) >= list.size()) {
 			return false;
 		}
 		key.set(currentPos);
-		value.buffer = new byte[chunkSize];
-		for (int i=0; i< value.buffer.length; i++) {
-			value.buffer[i] = buffer[(int)(list.get(currentPos) + i)];
+        byte[] bytes = new byte[chunkSize];
+		for (int i= 0; i < bytes.length; i++) {
+            bytes[i] = buffer[(int)(list.get(currentPos) + i)];
 		}
-		value.id = chunkId;
-		value.size = chunkSize;
-		value.fileNum = 1;
-		value.chunkNum = 1;
-		value.name = "chunk_" + chunkId;
-		
+
+		value.setId(chunkId);
+		value.setSize(chunkSize);
+		value.setFileNum(1);
+		value.setChunkNum(1);
+        value.setBuffer(bytes);
+        value.setHash(Constant.DEFAULT_HASH_VALUE);
+		value.setFileName(fileName);
+
+        pos += chunkSize;
 		return true;
 	}
 
 	@Override
 	public IntWritable getCurrentKey() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
+        log.debug("called:getCurrentKey");
+
 		return key;
 	}
 
 	@Override
 	public ChunkInfo getCurrentValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
+        log.debug("called:getCurrentValue");
 		return value;
 	}
 
 	@Override
 	public float getProgress() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
+        log.debug("called:getProgress");
 		if (start == end) {
 			return 0.0f;
 		} else {
@@ -139,6 +162,7 @@ public class CDCRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
+        log.debug("called:close");
 		if (fsin != null) {
 			fsin.close();
 		}
