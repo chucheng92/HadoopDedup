@@ -1,10 +1,11 @@
-package com.ryan.pojo;
+package com.ryan.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ryan.pojo.ChunkInfo;
 import com.ryan.util.Constant;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -93,18 +94,18 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	// generate chunk position and storage it in list
 	private void markChunkPostition(byte[] bytes, int size) {
 		// TODO Auto-generated method stub
-		int chunkNum = bytes.length / size + 1;
+		int chunkNum = (int)Math.ceil(bytes.length / (double)size);
 		for (int i = 0; i < bytes.length; i += size) {
 			// generate 4KB array
 			list.add((long)i);
 		}
-		//fill
-		if (list.size() != chunkNum) {
-			list.add(list.get(list.size() - 1) + size);
-		}
+//		//fill
+//		if (list.size() != chunkNum) {
+//			list.add(list.get(list.size() - 1) + size);
+//		}
 	}
 
-	@Override
+    @Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 

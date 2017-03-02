@@ -1,4 +1,4 @@
-package com.ryan.core;
+package com.ryan.boot;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

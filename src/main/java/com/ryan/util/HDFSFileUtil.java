@@ -1,4 +1,4 @@
-package com.ryan.core;
+package com.ryan.util;
 
 import java.io.IOException;
 import java.net.URI;

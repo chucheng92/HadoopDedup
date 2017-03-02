@@ -1,4 +1,4 @@
-package com.ryan.core;
+package com.ryan.boot;
 
 import java.io.IOException;
 
