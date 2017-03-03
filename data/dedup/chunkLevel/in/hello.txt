@@ -1,0 +1,4 @@
+hello hadoop hello hadoop hello hadoop1
+hello hadoop hello hadoop hello hadoop2
+hello hadoop hello hadoop hello hadoop3
+hello hadoop hello hadoop hello hadoop4
