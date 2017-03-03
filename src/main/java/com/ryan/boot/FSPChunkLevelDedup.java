@@ -30,7 +30,7 @@ public class FSPChunkLevelDedup {
         long start = System.currentTimeMillis();
 
 		Configuration conf = new Configuration();
-
+		
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
 		if (otherArgs.length != 2) {
@@ -44,9 +44,9 @@ public class FSPChunkLevelDedup {
 		job.setJarByClass(FileLevelDedup.class);
 		job.setMapperClass(FSPMapper.class);
 		job.setReducerClass(FSPReducer.class);
-        FSPFileInputFormat.setMinInputSplitSize(job, 1); //1B
-        FSPFileInputFormat.setMaxInputSplitSize(job, 31457280); //30MB
-
+		FSPFileInputFormat.setMinInputSplitSize(job, 1); //1B
+        FSPFileInputFormat.setMaxInputSplitSize(job, 62914560); //60MB
+		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 

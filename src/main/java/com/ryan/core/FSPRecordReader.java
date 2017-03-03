@@ -85,6 +85,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 				fsin.close();
 			}
 			buffer = out.toByteArray();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
