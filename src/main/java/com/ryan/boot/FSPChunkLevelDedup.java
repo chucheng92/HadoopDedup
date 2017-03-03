@@ -30,7 +30,11 @@ public class FSPChunkLevelDedup {
         long start = System.currentTimeMillis();
 
 		Configuration conf = new Configuration();
-		
+		//TODO config 60MB fraction,blockSize i have a problem
+		conf.set("mapred.min.split.size", "62914560");//minSize=60MB
+		conf.set("mapred.max.split.size", "62914560");//maxSize=60MB
+		// 计算分片大小
+        // Math.max(minSize, Math.min(maxSize, blockSize));
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
 		if (otherArgs.length != 2) {
@@ -44,8 +48,6 @@ public class FSPChunkLevelDedup {
 		job.setJarByClass(FileLevelDedup.class);
 		job.setMapperClass(FSPMapper.class);
 		job.setReducerClass(FSPReducer.class);
-		FSPFileInputFormat.setMinInputSplitSize(job, 1); //1B
-        FSPFileInputFormat.setMaxInputSplitSize(job, 62914560); //60MB
 		
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
