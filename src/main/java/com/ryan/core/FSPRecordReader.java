@@ -47,7 +47,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	private List<Long> list = new ArrayList<>();
 	
 	public FSPRecordReader() {
-        log.debug("called:FSPRecordReader Default Constructor");
+        log.debug("========called:FSPRecordReader Default Constructor============");
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -55,7 +55,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	public void initialize(InputSplit split, TaskAttemptContext context)
 			throws IOException, InterruptedException {
 
-        log.debug("called:initialize");
+        log.debug("==============called:initialize=========");
 
 		// TODO Auto-generated method stub
 		conf = context.getConfiguration();
@@ -94,6 +94,9 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	// generate chunk position and storage it in list
 	private void markChunkPostition(byte[] bytes, int size) {
 		// TODO Auto-generated method stub
+		
+		log.debug("==============called:markChunkPostition=========");
+		
 		int chunkNum = (int)Math.ceil(bytes.length / (double)size);
 		for (int i = 0; i < bytes.length; i += size) {
 			// generate 4KB array
@@ -103,25 +106,30 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 //		if (list.size() != chunkNum) {
 //			list.add(list.get(list.size() - 1) + size);
 //		}
+		
+		System.out.println("chunk position:" + list);
+		
 	}
 
     @Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 
-        log.debug("called:nextKeyValue");
+        log.debug("==========called:nextKeyValue=============");
 
 		int currentPos = this.chunkId;
 		this.chunkId++;
-		if ((currentPos + 1) >= list.size()) {
+		if (currentPos >= list.size()) {
 			return false;
 		}
 		key.set(currentPos);
+		
+		// if specific chunk < 4KB then padding it to 4KB
         byte[] bytes = new byte[chunkSize];
 		for (int i= 0; i < bytes.length; i++) {
             bytes[i] = buffer[(int)(list.get(currentPos) + i)];
 		}
-
+		
 		value.setId(chunkId);
 		value.setSize(chunkSize);
 		value.setFileNum(1);
@@ -137,7 +145,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	@Override
 	public IntWritable getCurrentKey() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-        log.debug("called:getCurrentKey");
+        log.debug("========called:getCurrentKey=========");
 
 		return key;
 	}
@@ -145,17 +153,19 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	@Override
 	public ChunkInfo getCurrentValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-        log.debug("called:getCurrentValue");
+        log.debug("===========called:getCurrentValue======");
 		return value;
 	}
 
 	@Override
 	public float getProgress() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-        log.debug("called:getProgress");
+        log.debug("==========called:getProgress==========");
 		if (start == end) {
+			log.debug("===========getProcess={}", 0.0f);
 			return 0.0f;
 		} else {
+			log.debug("===========getProcess={}", Math.min(1.0f, (pos-start)/(float)(end-start)));
 			return Math.min(1.0f, (pos-start)/(float)(end-start));
 		}
 	}
@@ -163,7 +173,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
-        log.debug("called:close");
+        log.debug("=============called:close=====================");
 		if (fsin != null) {
 			fsin.close();
 		}
