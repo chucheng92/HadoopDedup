@@ -40,7 +40,7 @@ public class ChunkInfo implements Writable {
 	}
 	
 	public ChunkInfo(int id, int size, int fileNum, int chunkNum,
-			byte[] buffer, String fileName, String hash) {
+			byte[] buffer, String hash, String fileName) {
 		this.id = id;
 		this.size = size;
 		this.fileNum = fileNum;

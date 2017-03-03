@@ -4,9 +4,11 @@ import com.ryan.core.FSPFileInputFormat;
 import com.ryan.pojo.ChunkInfo;
 import com.ryan.util.Constant;
 import com.ryan.util.Md5Util;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -49,7 +51,7 @@ public class FSPChunkLevelDedup {
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(ChunkInfo.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputKeyClass(IntWritable.class);
+		job.setOutputKeyClass(NullWritable.class);
 		
 		job.setInputFormatClass(FSPFileInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
@@ -76,8 +78,6 @@ public class FSPChunkLevelDedup {
 			Text reduceKey = new Text(hash);
 			value.setHash(hash);
 
-			log.debug("ChunkInfo:{}", value.toString());
-
 			context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
 					, value.getFileNum(), value.getChunkNum(), value.getBuffer()
 					, value.getHash(), value.getFileName()));
@@ -86,7 +86,7 @@ public class FSPChunkLevelDedup {
 		}
 	}
 
-	private static class FSPReducer extends Reducer<Text, ChunkInfo, Text, IntWritable> {
+	private static class FSPReducer extends Reducer<Text, ChunkInfo, Text, NullWritable> {
 		int id = 1;
 		@Override
 		protected void reduce(Text key, Iterable<ChunkInfo> values, Context context) throws IOException, InterruptedException {
@@ -105,6 +105,7 @@ public class FSPChunkLevelDedup {
 				}
 
 				log.debug("ChunkInfo:{}", chunk.toString());
+				
 				flag = false;
 			}
 
@@ -116,8 +117,8 @@ public class FSPChunkLevelDedup {
 //			chunkInfo.setBuffer();
 			chunkInfo.setHash(key.toString());
 			chunkInfo.setFileName(fileName);
-
-			context.write(new Text(chunkInfo.toString()), new IntWritable(0));
+						
+			context.write(new Text(chunkInfo.toString()), NullWritable.get());
 			id++;
 		}
 	}

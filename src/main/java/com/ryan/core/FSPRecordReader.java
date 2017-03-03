@@ -137,6 +137,8 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         value.setBuffer(bytes);
         value.setHash(Constant.DEFAULT_HASH_VALUE);
 		value.setFileName(fileName);
+		
+		log.debug("==========fileName={}", fileName);
 
         pos += chunkSize;
 		return true;
