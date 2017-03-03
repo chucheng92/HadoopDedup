@@ -44,6 +44,8 @@ public class FSPChunkLevelDedup {
 		job.setJarByClass(FileLevelDedup.class);
 		job.setMapperClass(FSPMapper.class);
 		job.setReducerClass(FSPReducer.class);
+        FSPFileInputFormat.setMinInputSplitSize(job, 1); //1B
+        FSPFileInputFormat.setMaxInputSplitSize(job, 31457280); //30MB
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
