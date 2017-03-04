@@ -59,6 +59,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
 		// TODO Auto-generated method stub
 		conf = context.getConfiguration();
+		conf.set("fs.default.name", "hdfs://Master.Hadoop:9000");
 		this.fileSplit = (FileSplit)split;
 		this.filePath = this.fileSplit.getPath();
 		this.chunkId = 0;
@@ -67,25 +68,38 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         this.pos = this.start;
 		
 		try {
+			Path fingerPath = new Path("/usr/local/hadoop/fspdedup/finger.txt");
+			this.fs = fingerPath.getFileSystem(conf);
+			this.fsin = fs.open(fingerPath);
+			String fingerName = fsin.readLine();
+			
+			log.debug("==========fingerName={}", fingerName);
+			
 			this.fs = filePath.getFileSystem(conf);
 			this.fileName = this.filePath.toString();
-
-            log.info("fileName={}", fileName);
-
-            this.fsin = fs.open(filePath);
-			fsin.seek(start);
-			// read file from fsin to output stream
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
-			int flag = 0;
-			while ((flag = fsin.read(buffer)) != -1) {
+			String matchName = filePath.getName();
+			
+			log.debug("===========matchName={}", matchName);
+            log.debug("===========fileName={}", fileName);
+            
+            if (fingerName.equals(matchName)) {
+            	buffer = null;
+            } else {
+            	this.fsin = fs.open(filePath);
+            	fsin.seek(start);
+            	// read file from fsin to output stream
+            	ByteArrayOutputStream out = new ByteArrayOutputStream();
+            	buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
+            	int flag = 0;
+            	while ((flag = fsin.read(buffer)) != -1) {
 				out.write(buffer);
-			}
-			if (-1 == flag) {
-				fsin.close();
-			}
-			buffer = out.toByteArray();
-			out.close();
+            	}
+            	if (-1 == flag) {
+            		fsin.close();
+            	}
+            	buffer = out.toByteArray();
+            	out.close();
+            }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -95,27 +109,26 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 	// generate chunk position and storage it in list
 	private void markChunkPostition(byte[] bytes, int size) {
 		// TODO Auto-generated method stub
+		if (bytes != null) {
+			log.debug("==============called:markChunkPostition=========");
 		
-		log.debug("==============called:markChunkPostition=========");
-		
-		int chunkNum = (int)Math.ceil(bytes.length / (double)size);
-		for (int i = 0; i < bytes.length; i += size) {
+			int chunkNum = (int)Math.ceil(bytes.length / (double)size);
+			for (int i = 0; i < bytes.length; i += size) {
 			// generate 4KB array
 			list.add((long)i);
+			}
+			//		//fill
+			//		if (list.size() != chunkNum) {
+			//			list.add(list.get(list.size() - 1) + size);
+			//		}
+		
+			System.out.println("chunk position:" + list);
 		}
-//		//fill
-//		if (list.size() != chunkNum) {
-//			list.add(list.get(list.size() - 1) + size);
-//		}
-		
-		System.out.println("chunk position:" + list);
-		
 	}
 
     @Override
 	public boolean nextKeyValue() throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-
         log.debug("==========called:nextKeyValue=============");
 
 		int currentPos = this.chunkId;
