@@ -21,6 +21,7 @@ public class HBaseUtil {
     private static Logger logger = LoggerFactory.getLogger(HBaseUtil.class);
 
     static Configuration conf = null;
+
     static {
         conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum", "localhost");
@@ -175,7 +176,7 @@ public class HBaseUtil {
      * @param value
      * @throws IOException
      */
-    public static void put(String tableName, String rowKey, String family, String[] qualifier, String[] value) throws IOException {
+    public static void batchPut(String tableName, String rowKey, String family, String[] qualifier, String[] value) throws IOException {
         // 客户端可以通过HTable对象与服务端进行CRUD操作
         HTable hTable = new HTable(conf, tableName);
 
@@ -224,7 +225,7 @@ public class HBaseUtil {
      * @param rowKey
      * @throws IOException
      */
-    public static void delete(String tableName, String rowKey) throws IOException {
+    public static void deleteAll(String tableName, String rowKey) throws IOException {
         // 客户端可以通过HTable对象与服务端进行CRUD操作
         HTable hTable = new HTable(conf, Bytes.toBytes(tableName));
         Delete deleteAll = new Delete(Bytes.toBytes(rowKey));
@@ -238,7 +239,7 @@ public class HBaseUtil {
      * @param tableName
      * @throws IOException
      */
-    public static void delete(String tableName) throws IOException {
+    public static void deleteTable(String tableName) throws IOException {
         HBaseAdmin admin = new HBaseAdmin(conf);
         admin.disableTable(tableName);
         admin.deleteTable(tableName);
