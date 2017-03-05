@@ -30,9 +30,9 @@ public class FSPChunkLevelDedup {
         long start = System.currentTimeMillis();
 
 		Configuration conf = new Configuration();
-		//TODO config 60MB fraction,blockSize i have a problem
-		conf.set("mapred.min.split.size", "62914560");//minSize=60MB
-		conf.set("mapred.max.split.size", "62914560");//maxSize=60MB
+        //TODO config 60MB fraction,blockSize i have a problem
+        conf.set("mapred.min.split.size", "62914560");//minSize=60MB
+        conf.set("mapred.max.split.size", "62914560");//maxSize=60MB
 		// 计算分片大小
         // Math.max(minSize, Math.min(maxSize, blockSize));
 		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
@@ -84,29 +84,32 @@ public class FSPChunkLevelDedup {
 
 			context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
 					, value.getFileNum(), value.getChunkNum(), value.getBuffer()
-					, value.getHash(), value.getFileName()));
+					, value.getHash(), value.getFileName(), value.getOffset()));
 			
 			log.debug("=============map end============");
 		}
 	}
 
 	private static class FSPReducer extends Reducer<Text, ChunkInfo, Text, NullWritable> {
-		int id = 1;
+        int id = 1;
 		@Override
 		protected void reduce(Text key, Iterable<ChunkInfo> values, Context context) throws IOException, InterruptedException {
 			int fileNumCounter = 0;
 			int chunkNumCounter = 0;
+            int offset = -1;
 			boolean flag = true;
 			String fileName = Constant.DEFAULT_FILE_NAME;
-			//
+			// duplicate chunks
 			for (ChunkInfo chunk: values) {
 				chunkNumCounter++;
 				if (flag) {
 					fileName = chunk.getFileName();
-				}
-				if (chunk.getFileName().equals(fileName)) {
+                    offset = chunk.getOffset();
 					fileNumCounter++;
 				}
+				if (!chunk.getFileName().equals(fileName)) {
+                    fileNumCounter++;
+                }
 
 				log.debug("ChunkInfo:{}", chunk.toString());
 				
@@ -121,7 +124,8 @@ public class FSPChunkLevelDedup {
 //			chunkInfo.setBuffer();
 			chunkInfo.setHash(key.toString());
 			chunkInfo.setFileName(fileName);
-						
+            chunkInfo.setOffset(offset);
+
 			context.write(new Text(chunkInfo.toString()), NullWritable.get());
 			id++;
 		}

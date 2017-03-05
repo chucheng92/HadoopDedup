@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.ryan.util.Constant;
 import org.apache.hadoop.io.Writable;
@@ -21,11 +22,12 @@ public class ChunkInfo implements Writable {
 
 	private int id; //chunk id
 	private int size; //chunk size
-	private int fileNum; //one chunk belong to how many files
-	private int chunkNum; //one chunk exist how many times
+	private int fileNum; //number of one specific chunk belongs to different files
+	private int chunkNum; //number of one specific chunk exists how many times
 	private byte[] buffer = null;//chunk bytes
 	private String hash; //chunk hash value
 	private String fileName; // belong to first old file(full hdfs path)
+	private int offset; //chunk offset
 
 
 	public ChunkInfo() {
@@ -37,10 +39,11 @@ public class ChunkInfo implements Writable {
 		this.buffer = new byte[size];
 		this.hash = Constant.DEFAULT_HASH_VALUE;
 		this.fileName = Constant.DEFAULT_FILE_NAME;
+        this.offset = -1;
 	}
 	
 	public ChunkInfo(int id, int size, int fileNum, int chunkNum,
-			byte[] buffer, String hash, String fileName) {
+			byte[] buffer, String hash, String fileName, int offset) {
 		this.id = id;
 		this.size = size;
 		this.fileNum = fileNum;
@@ -48,6 +51,7 @@ public class ChunkInfo implements Writable {
 		this.buffer = buffer;
 		this.hash = hash;
 		this.fileName = fileName;
+        this.offset = offset;
 	}
 
 	@Override
@@ -61,6 +65,7 @@ public class ChunkInfo implements Writable {
 			this.chunkNum = arg0.readInt();
 			this.hash = arg0.readUTF();
 			this.fileName = arg0.readUTF();
+            this.offset = arg0.readInt();
 		} catch(EOFException e) {
 			return;
 		}
@@ -75,17 +80,24 @@ public class ChunkInfo implements Writable {
         arg0.writeInt(this.chunkNum);  
         arg0.writeUTF(this.hash);  
         arg0.writeUTF(this.fileName);
-        
+        arg0.writeInt(this.offset);
 	}
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return this.id + " " + this.size + " " + this.fileNum 
-				+ " " + this.chunkNum + " " + this.hash + " " + this.fileName;
-	}
+    @Override
+    public String toString() {
+        return "ChunkInfo{" +
+                "id=" + id +
+                ", size=" + size +
+                ", fileNum=" + fileNum +
+                ", chunkNum=" + chunkNum +
+                ", buffer=" + Arrays.toString(buffer) +
+                ", hash='" + hash + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", offset=" + offset +
+                '}';
+    }
 
-	// =========== getters/setters =============
+    // =========== getters/setters =============
 	public int getId() {
 		return id;
 	}
@@ -141,4 +153,12 @@ public class ChunkInfo implements Writable {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 }
