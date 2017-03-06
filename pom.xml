@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
-            <version>0.94.7</version>
+            <version>0.94.10</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->

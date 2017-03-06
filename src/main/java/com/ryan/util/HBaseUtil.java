@@ -24,7 +24,7 @@ public class HBaseUtil {
 
     static {
         conf = HBaseConfiguration.create();
-        conf.set("hbase.zookeeper.quorum", "localhost");
+        conf.set("hbase.zookeeper.quorum", "Master.Hadoop,Slave1.Hadoop,Slave2.Hadoop");
     }
 
     /**
@@ -40,9 +40,12 @@ public class HBaseUtil {
             descriptor.addFamily(new HColumnDescriptor(family[i]));
         }
         if (admin.tableExists(tableName)) {
-            logger.info("table exists");
+            logger.info("===table exists===");
             return;
-        }
+        } else {
+            admin.createTable(descriptor);
+            logger.info("===create table success===");
+        } 
     }
 
     /**
@@ -55,6 +58,7 @@ public class HBaseUtil {
     public static Result getResultByRowKey(String tableName, String rowKey) throws IOException {
         // 客户端可以通过HTable对象与服务端进行CRUD操作
         HTable hTable = new HTable(conf, tableName);
+        
         Get get = new Get(Bytes.toBytes(rowKey));
         Result result = hTable.get(get);
 
@@ -79,8 +83,10 @@ public class HBaseUtil {
     public static Result getResultByFamily(String tableName, String rowKey, String family) throws IOException {
         // 客户端可以通过HTable对象与服务端进行CRUD操作
         HTable hTable = new HTable(conf, tableName);
+        
         Get get = new Get(Bytes.toBytes(rowKey));
         get.addFamily(Bytes.toBytes(family));
+        
         Result result = hTable.get(get);
 
         for (KeyValue kv : result.list()) {
@@ -105,10 +111,12 @@ public class HBaseUtil {
     public static Result getResultByQualifier(String tableName, String rowKey, String family, String qualifier) throws IOException {
         // 客户端可以通过HTable对象与服务端进行CRUD操作
         HTable hTable = new HTable(conf, tableName);
+        
         Get get = new Get(Bytes.toBytes(rowKey));
         get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
+        
         Result result = hTable.get(get);
-
+        
         for (KeyValue kv : result.list()) {
             System.out.println("family: " + Bytes.toString(kv.getFamily()));
             System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
@@ -163,7 +171,7 @@ public class HBaseUtil {
         put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
         hTable.put(put);
 
-        logger.info("put data success.");
+        logger.info("===put data success.===");
     }
 
     /**
@@ -196,7 +204,7 @@ public class HBaseUtil {
 
         hTable.put(put);
 
-        logger.info("put data success(batch mode)");
+        logger.info("===put data success(batch mode)===");
     }
 
     /**
@@ -307,19 +315,41 @@ public class HBaseUtil {
         String tableName = "fingerprint";
         String[] family = { "chunkInfo", "fileInfo" };
 
-        // createTable
-        try {
-            createTable(tableName, family);
-        } catch (Exception e) {
-            logger.info("create table error.");
-            e.printStackTrace();
-        }
+//        // 1.createTable
+//        try {
+//            createTable(tableName, family);
+//        } catch (Exception e) {
+//            logger.info("===create table error.===");
+//            e.printStackTrace();
+//        }
 
-        // 为表添加数据
-        put(tableName, "rowkey1", family[0], "hashvalue", "FFEEFF1");
-
-        String[] qualifier = { "id", "hashvalue", "fileNum", "chunkNum"};
-        String[] value = {"1", "FFEEFF2", "1", "1"};
-        batchPut(tableName, "rowkey1", family[0], qualifier, value);
+        // 2.put
+//        put(tableName, "rowkey2", family[0], "hashvalue", "FFEEFF1");
+//        put(tableName, "rowkey3", family[0], "hashvalue", "FFEEFF1");
+        
+        //3.batchPut
+//        String[] qualifier = { "id", "hashvalue", "fileNum", "chunkNum"};
+//        String[] value = {"1", "FFEEFF2", "1", "1"};
+//        batchPut(tableName, "rowkey1", family[0], qualifier, value);
+        
+        getResultByRowKey(tableName, "rowkey1");
+        logger.info("===getResultByRowKey over.===");
+        
+        getResultByFamily(tableName, "rowkey1", family[0]);
+        logger.info("===getResultByFamily over.===");
+        
+        getResultByQualifier(tableName, "rowkey1", family[0], "hashvalue");
+        logger.info("===getResultByQualifier over.===");
+        
+        getResultByVersion(tableName, "rowkey1", family[0], "hashvalue");
+        logger.info("===getResultByVersion over.===");
+        
+        scan(tableName);
+        logger.info("===scan over.===");
+        
+        rangeScan(tableName, "rowkey1", "rowkey4");
+        logger.info("===rangeScan over.===");
+        
+        logger.info("===test over.===");
     }
 }
