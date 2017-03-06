@@ -3,6 +3,7 @@ package com.ryan.boot;
 import com.ryan.core.FSPFileInputFormat;
 import com.ryan.pojo.ChunkInfo;
 import com.ryan.util.Constant;
+import com.ryan.util.HBaseUtil;
 import com.ryan.util.HDFSFileUtil;
 import com.ryan.util.Md5Util;
 
@@ -84,6 +85,10 @@ public class FSPChunkLevelDedup {
 			String hash = Md5Util.getMd5(value.getBuffer());
 			Text reduceKey = new Text(hash);
 			value.setHash(hash);
+
+			// hbase
+			HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
+					, "fileFamily", "chunksQualifier", String.valueOf(value.getId()));
 
 			context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
 					, value.getFileNum(), value.getChunkNum(), value.getBuffer()

@@ -116,7 +116,7 @@ public class HBaseUtil {
         get.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
         
         Result result = hTable.get(get);
-        
+
         for (KeyValue kv : result.list()) {
             System.out.println("family: " + Bytes.toString(kv.getFamily()));
             System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
@@ -125,6 +125,30 @@ public class HBaseUtil {
         }
 
         return result;
+    }
+
+    /**
+     * judge specific qualifier-value exists
+     * @param tableName
+     * @param rowKey
+     * @param family
+     * @param qualifier
+     * @param value
+     * @return
+     * @throws IOException
+     */
+    @Deprecated
+    public static boolean isMatch(String tableName, String rowKey, String family, String qualifier, String value) throws IOException {
+        Result result = getResultByQualifier(tableName, rowKey, family, qualifier);
+
+        if (null != value) {
+            for (KeyValue kv : result.list()) {
+                if (value.equals(Bytes.toString(kv.getValue()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
