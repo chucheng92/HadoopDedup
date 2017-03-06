@@ -6,9 +6,10 @@ data - 数据集
 
 docs - 文档
 
-src - MapReduce程序
+src - MapReduce
 
 ## 环境
 
 Hadoop版本1.1.2
+
 HBase 0.94.8
