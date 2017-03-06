@@ -32,3 +32,4 @@ export PATH=$HADOOP_HOME/bin:$PATH
 ## HBase完全分布式环境参数
 
 HBase版本0.94.8
+

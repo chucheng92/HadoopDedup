@@ -3,6 +3,7 @@ package com.ryan.boot;
 import com.ryan.core.FSPFileInputFormat;
 import com.ryan.pojo.ChunkInfo;
 import com.ryan.util.Constant;
+import com.ryan.util.HDFSFileUtil;
 import com.ryan.util.Md5Util;
 
 import org.apache.hadoop.conf.Configuration;
@@ -24,7 +25,9 @@ import java.io.IOException;
 
 public class FSPChunkLevelDedup {
 	private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
-	
+
+    private static final String HDFS_PATH = "hdfs://Master.Hadoop:9000/usr/local/hadoop";
+
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
         long start = System.currentTimeMillis();
@@ -97,6 +100,7 @@ public class FSPChunkLevelDedup {
 			int fileNumCounter = 0;
 			int chunkNumCounter = 0;
             int offset = -1;
+			byte[] buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
 			boolean flag = true;
 			String fileName = Constant.DEFAULT_FILE_NAME;
 			// duplicate chunks
@@ -105,7 +109,14 @@ public class FSPChunkLevelDedup {
 				if (flag) {
 					fileName = chunk.getFileName();
                     offset = chunk.getOffset();
-					fileNumCounter++;
+					buffer = chunk.getBuffer();
+                    try {
+                        Path chunkPath = new Path(HDFS_PATH + "/chunk/" + key.toString() + ".blob");
+                        HDFSFileUtil.createHDFSFile(chunkPath, buffer);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    fileNumCounter++;
 				}
 				if (!chunk.getFileName().equals(fileName)) {
                     fileNumCounter++;
@@ -121,7 +132,7 @@ public class FSPChunkLevelDedup {
 			chunkInfo.setSize(Constant.DEFAULT_CHUNK_SIZE);
 			chunkInfo.setFileNum(fileNumCounter);
 			chunkInfo.setChunkNum(chunkNumCounter);
-//			chunkInfo.setBuffer();
+			chunkInfo.setBuffer(buffer);
 			chunkInfo.setHash(key.toString());
 			chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);

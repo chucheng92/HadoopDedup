@@ -196,7 +196,7 @@ public class HBaseUtil {
 
         hTable.put(put);
 
-        logger.info("add data success(batch mode)");
+        logger.info("put data success(batch mode)");
     }
 
     /**
@@ -301,5 +301,25 @@ public class HBaseUtil {
         } finally {
             rs.close();
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String tableName = "fingerprint";
+        String[] family = { "chunkInfo", "fileInfo" };
+
+        // createTable
+        try {
+            createTable(tableName, family);
+        } catch (Exception e) {
+            logger.info("create table error.");
+            e.printStackTrace();
+        }
+
+        // 为表添加数据
+        put(tableName, "rowkey1", family[0], "hashvalue", "FFEEFF1");
+
+        String[] qualifier = { "id", "hashvalue", "fileNum", "chunkNum"};
+        String[] value = {"1", "FFEEFF2", "1", "1"};
+        batchPut(tableName, "rowkey1", family[0], qualifier, value);
     }
 }
