@@ -2,7 +2,7 @@
 
 HBase指纹库结构
 
-create 'fingerprint','fileFamily','extFamily'
+create 'finger_print','fileFamily','extFamily'
 
 rowkey: fileName
 family: fileFamily, extFamily

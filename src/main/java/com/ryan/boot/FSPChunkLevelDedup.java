@@ -90,6 +90,8 @@ public class FSPChunkLevelDedup {
 			HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
 					, "fileFamily", "chunksQualifier", String.valueOf(value.getId()));
 
+			log.info("===file-mapping has been wrote hbase successful");
+
 			context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
 					, value.getFileNum(), value.getChunkNum(), value.getBuffer()
 					, value.getHash(), value.getFileName(), value.getOffset()));
