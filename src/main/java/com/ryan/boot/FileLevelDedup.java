@@ -3,7 +3,6 @@ package com.ryan.boot;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
@@ -14,18 +13,37 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.util.GenericOptionsParser;
 
 import com.ryan.util.Md5Util;
 
-public class FileLevelDedup extends Configured implements Tool {
+public class FileLevelDedup {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		int res = ToolRunner.run(conf, new FileLevelDedup(), args);
-		
-		System.exit(res);
+
+		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+		if (otherArgs.length != 2) {
+			System.err.println("Usage: FileLevelDedup <in> <out>");
+			System.exit(2);
+		}
+
+
+        Job job = new Job(conf, "Job_FileLevelDeduplicator");
+        job.setJarByClass(FileLevelDedup.class);
+        job.setMapperClass(FileLevelDedupMapper.class);
+        job.setReducerClass(FileLevelDedupReducer.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.waitForCompletion(true);
+
+        System.exit(job.isSuccessful() ? 0 : 1);
 	}
 
 	enum Counter {
@@ -64,27 +82,4 @@ public class FileLevelDedup extends Configured implements Tool {
 			context.write(imageFilePath, key);
 		}
 	}
-
-	@Override
-	public int run(String[] args) throws Exception {
-		Configuration conf = getConf();
-
-		Job job = new Job(conf, "Job_FileLevelDeduplicator");
-		job.setJarByClass(FileLevelDedup.class);
-		job.setMapperClass(FileLevelDedupMapper.class);
-		job.setReducerClass(FileLevelDedupReducer.class);
-		
-		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
-
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-		job.setInputFormatClass(SequenceFileInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-
-		job.waitForCompletion(true);
-
-		return job.isSuccessful() ? 0 : 1;
-	}
-
 }
