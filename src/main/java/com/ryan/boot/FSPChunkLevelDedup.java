@@ -9,6 +9,8 @@ import com.ryan.util.Md5Util;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -82,15 +84,26 @@ public class FSPChunkLevelDedup {
 	private static class FSPMapper extends Mapper<IntWritable, ChunkInfo, Text, ChunkInfo> {
 		@Override
 		protected void map(IntWritable key, ChunkInfo value, Context context) throws IOException, InterruptedException {
+			log.debug("================map start============");
+			
 			String hash = Md5Util.getMd5(value.getBuffer());
 			Text reduceKey = new Text(hash);
 			value.setHash(hash);
-
+			
+			String preValue;
 			// hbase
+			Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME, 
+					value.getFileName(), "fileFamily", "chunksQualifier");
+			if (result != null) {
+				preValue = Bytes.toString(result.list().get(0).getValue());
+			} else {
+				preValue = "";
+			}
+			String curValue = preValue + value.getId() + "," ;
 			HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
-					, "fileFamily", "chunksQualifier", String.valueOf(value.getId()));
+					, "fileFamily", "chunksQualifier", curValue);
 
-			log.info("===file-mapping has been wrote hbase successful");
+			log.info("===file-mapping has been wrote hbase successful======");
 
 			context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
 					, value.getFileNum(), value.getChunkNum(), value.getBuffer()

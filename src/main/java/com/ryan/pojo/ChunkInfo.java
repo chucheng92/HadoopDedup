@@ -90,7 +90,7 @@ public class ChunkInfo implements Writable {
                 ", size=" + size +
                 ", fileNum=" + fileNum +
                 ", chunkNum=" + chunkNum +
-                ", buffer=" + Arrays.toString(buffer) +
+                ", buffer=[ignore]"  +
                 ", hash='" + hash + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", offset=" + offset +

@@ -63,8 +63,8 @@ public class HBaseUtil {
 
         Get get = new Get(Bytes.toBytes(rowKey));
         Result result = hTable.get(get);
-
-        if (null != result) {
+        
+        if (null != result.list()) {
             for (KeyValue kv : result.list()) {
                 System.out.println("family: " + Bytes.toString(kv.getFamily()));
                 System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
@@ -92,15 +92,16 @@ public class HBaseUtil {
         get.addFamily(Bytes.toBytes(family));
 
         Result result = hTable.get(get);
-        if (null != result) {
+        if (null != result.list()) {
             for (KeyValue kv : result.list()) {
                 System.out.println("family: " + Bytes.toString(kv.getFamily()));
                 System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
                 System.out.println("value: " + Bytes.toString(kv.getValue()));
                 System.out.println("timestamp: " + kv.getTimestamp());
             }
+            return result;
         }
-        return result;
+        return null;
     }
 
     /**
@@ -122,15 +123,16 @@ public class HBaseUtil {
 
         Result result = hTable.get(get);
 
-        if (null != result) {
+        if (null != result.list()) {
             for (KeyValue kv : result.list()) {
                 System.out.println("family: " + Bytes.toString(kv.getFamily()));
                 System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
                 System.out.println("value: " + Bytes.toString(kv.getValue()));
                 System.out.println("timestamp: " + kv.getTimestamp());
             }
+            return result;
         }
-        return result;
+        return null;
     }
 
     /**
@@ -356,12 +358,12 @@ public class HBaseUtil {
         String[] family = {"fileFamily", "extFamily"};
 
         // 1.createTable
-        try {
-            createTable(tableName, family);
-        } catch (Exception e) {
-            logger.info("===create table error.===");
-            e.printStackTrace();
-        }
+//        try {
+//            createTable(tableName, family);
+//        } catch (Exception e) {
+//            logger.info("===create table error.===");
+//            e.printStackTrace();
+//        }
 
         // 2.put
 //        put(tableName, "rowkey2", family[0], "hashvalue", "FFEEFF1");
@@ -371,15 +373,16 @@ public class HBaseUtil {
 //        String[] qualifier = { "id", "hashvalue", "fileNum", "chunkNum"};
 //        String[] value = {"1", "FFEEFF2", "1", "1"};
 //        batchPut(tableName, "rowkey1", family[0], qualifier, value);
-
+        //4.deleteAll
+        deleteAll(tableName,"file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/1362969045_index.jpg");
 //        getResultByRowKey(tableName, "rowkey0");
 //        logger.info("===getResultByRowKey over.===");
 //
 //        getResultByFamily(tableName, "rowkey1", family[0]);
 //        logger.info("===getResultByFamily over.===");
 //
-//        getResultByQualifier(tableName, "rowkey1", family[0], "hashvalue");
-//        logger.info("===getResultByQualifier over.===");
+        getResultByQualifier(tableName, "rowkey10", family[0], "chunksQualifier");
+        logger.info("===getResultByQualifier over.===");
 //
 //        getResultByVersion(tableName, "rowkey1", family[0], "hashvalue");
 //        logger.info("===getResultByVersion over.===");
