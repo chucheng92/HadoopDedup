@@ -61,14 +61,15 @@ public class HBaseUtil {
         
         Get get = new Get(Bytes.toBytes(rowKey));
         Result result = hTable.get(get);
-
+        
+        if (null != result) {
         for (KeyValue kv : result.list()) {
             System.out.println("family: " + Bytes.toString(kv.getFamily()));
             System.out.println("qualifier: " + Bytes.toString(kv.getQualifier()));
             System.out.println("value: " + Bytes.toString(kv.getValue()));
             System.out.println("timestamp: "+ kv.getTimestamp());
         }
-
+        }
         return result;
     }
 
@@ -356,7 +357,7 @@ public class HBaseUtil {
 //        String[] value = {"1", "FFEEFF2", "1", "1"};
 //        batchPut(tableName, "rowkey1", family[0], qualifier, value);
         
-        getResultByRowKey(tableName, "rowkey1");
+        getResultByRowKey(tableName, "rowkey0");
         logger.info("===getResultByRowKey over.===");
         
         getResultByFamily(tableName, "rowkey1", family[0]);
