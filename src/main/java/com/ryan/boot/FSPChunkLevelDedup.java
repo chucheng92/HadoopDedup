@@ -39,7 +39,15 @@ public class FSPChunkLevelDedup {
         //TODO config 60MB fraction,blockSize i have a problem
         // 计算分片大小
         // Math.max(minSize, Math.min(maxSize, blockSize));
-        conf.set("mapred.min.split.size", "62914560");//minSize=60MB
+        /**
+		 * pre-process work for using sequence file
+		 *
+		 * generate file_path(value) kv file
+		 *
+		 * @author Ryan Tao
+		 * @date 2017-2-9
+		 */
+		conf.set("mapred.min.split.size", "62914560");//minSize=60MB
         conf.set("mapred.max.split.size", "62914560");//maxSize=60MB
         conf.set("dfs.permissions","false");
         //在你的文件地址前自动添加：hdfs://master:9000/

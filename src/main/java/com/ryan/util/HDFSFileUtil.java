@@ -10,14 +10,7 @@ import org.apache.hadoop.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * pre-process work for using sequence file
- * 
- * generate file_path(value) kv file
- * 
- * @author Ryan Tao
- * @date 2017-2-9
- */
+
 public class HDFSFileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(HDFSFileUtil.class);
