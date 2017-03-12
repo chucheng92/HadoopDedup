@@ -17,10 +17,9 @@ import java.io.IOException;
  * @github lemonjing
  */
 public class HBaseUtil {
-
     private static Logger logger = LoggerFactory.getLogger(HBaseUtil.class);
 
-    static Configuration conf = null;
+    private static Configuration conf = null;
 
     static {
         conf = HBaseConfiguration.create();
