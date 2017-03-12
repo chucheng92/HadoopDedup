@@ -81,7 +81,6 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
             Result result = HBaseUtil.getResultByRowKey(Constant.DEFAULT_HBASE_TABLE_NAME, fileName);
             if (null != result.list()) {
                 buffer = null;
-
                 log.debug("this file split has been processed");
             } else {
                 fsin = fs.open(filePath);
