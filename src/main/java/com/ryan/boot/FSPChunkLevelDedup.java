@@ -36,42 +36,29 @@ public class FSPChunkLevelDedup {
         long start = System.currentTimeMillis();
 
 		Configuration conf = new Configuration();
-        //TODO config 60MB fraction,blockSize i have a problem
+
+        //TODO config 60MB fraction
         // 计算分片大小
         // Math.max(minSize, Math.min(maxSize, blockSize));
-        /**
-		 * pre-process work for using sequence file
-		 *
-		 * generate file_path(value) kv file
-		 *
-		 * @author Ryan Tao
-		 * @date 2017-2-9
-		 */
 		conf.set("mapred.min.split.size", "62914560");//minSize=60MB
         conf.set("mapred.max.split.size", "62914560");//maxSize=60MB
         conf.set("dfs.permissions","false");
-        //在你的文件地址前自动添加：hdfs://master:9000/
-        conf.set("hadoop.job.user","taoxiaoran");
-        conf.set("fs.default.name", "hdfs://Master.Hadoop:9000");
-        //指定jobtracker的ip和端口号，Master.Hadoop在/etc/hosts中可以配置
-        conf.set("mapred.job.tracker","Master.Hadoop:9001");
 
+        String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+        if (otherArgs.length != 2) {
+            System.err.println("Usage: FSPChunkLevelDedup <in> <out>");
+            System.exit(2);
+        }
 
-//        String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-//		if (otherArgs.length != 2) {
-//			System.err.println("Usage: FSPChunkLevelDedup <in> <out>");
-//			System.exit(2);
-//		}
-		
-		log.debug("=========job start=========");
-		
-		Job job = new Job(conf, "Job_FSPChunkLevelDedup");
+        log.debug("=========job start=========");
+
+        Job job = new Job(conf, "Job_FSPChunkLevelDedup");
 		job.setJarByClass(FileLevelDedup.class);
 		job.setMapperClass(FSPMapper.class);
 		job.setReducerClass(FSPReducer.class);
-		
-		FileInputFormat.addInputPath(job, new Path("data/dedup/chunkLevel/in"));
-		FileOutputFormat.setOutputPath(job, new Path("data/dedup/chunkLevel/out"));
+
+        FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
 
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(ChunkInfo.class);
@@ -129,9 +116,10 @@ public class FSPChunkLevelDedup {
 	}
 
 	private static class FSPReducer extends Reducer<Text, ChunkInfo, Text, NullWritable> {
-        int id = 1;
-		@Override
-		protected void reduce(Text key, Iterable<ChunkInfo> values, Context context) throws IOException, InterruptedException {
+        private int id = 1;
+
+        @Override
+        protected void reduce(Text key, Iterable<ChunkInfo> values, Context context) throws IOException, InterruptedException {
 			int fileNumCounter = 0;
 			int chunkNumCounter = 0;
             int offset = -1;
@@ -146,7 +134,8 @@ public class FSPChunkLevelDedup {
                     offset = chunk.getOffset();
 					buffer = chunk.getBuffer();
                     try {
-                        Path chunkPath = new Path(HDFS_PATH + "/chunk/" + key.toString() + ".blob");
+                        Path chunkPath = new Path(HDFS_PATH + "/chunk/" + "id" + id + "_"
+                                + key.toString() + ".blob");
                         HDFSFileUtil.createHDFSFile(chunkPath, buffer);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -156,7 +145,6 @@ public class FSPChunkLevelDedup {
 				if (!chunk.getFileName().equals(fileName)) {
                     fileNumCounter++;
                 }
-
 				log.debug("ChunkInfo:{}", chunk.toString());
 				
 				flag = false;
@@ -171,9 +159,8 @@ public class FSPChunkLevelDedup {
 			chunkInfo.setHash(key.toString());
 			chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
-
-			context.write(new Text(chunkInfo.toString()), NullWritable.get());
-			id++;
-		}
+            id++;
+            context.write(new Text(chunkInfo.toString()), NullWritable.get());
+        }
 	}
 }

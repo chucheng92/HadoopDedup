@@ -374,15 +374,14 @@ public class HBaseUtil {
 //        String[] value = {"1", "FFEEFF2", "1", "1"};
 //        batchPut(tableName, "rowkey1", family[0], qualifier, value);
         //4.deleteAll
-        deleteAll(tableName,"file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/1362969045_index.jpg");
+        deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg");
+        deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg");
+//        deleteAll(tableName,"file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg");
 //        getResultByRowKey(tableName, "rowkey0");
 //        logger.info("===getResultByRowKey over.===");
 //
 //        getResultByFamily(tableName, "rowkey1", family[0]);
 //        logger.info("===getResultByFamily over.===");
-//
-        getResultByQualifier(tableName, "rowkey10", family[0], "chunksQualifier");
-        logger.info("===getResultByQualifier over.===");
 //
 //        getResultByVersion(tableName, "rowkey1", family[0], "hashvalue");
 //        logger.info("===getResultByVersion over.===");

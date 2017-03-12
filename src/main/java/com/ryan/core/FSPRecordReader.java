@@ -115,10 +115,6 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
                 // generate 4KB array
                 list.add((long) i);
             }
-            //		//fill
-            //		if (list.size() != chunkNum) {
-            //			list.add(list.get(list.size() - 1) + size);
-            //		}
 
             System.out.println("chunk position:" + list);
         }
@@ -154,6 +150,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         log.debug("==========fileName={}", fileName);
 
         pos += chunkSize;
+
         return true;
     }
 

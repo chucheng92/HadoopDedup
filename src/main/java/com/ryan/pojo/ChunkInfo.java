@@ -4,7 +4,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.Arrays;
 
 import com.ryan.util.Constant;
 import org.apache.hadoop.io.Writable;
@@ -74,9 +73,9 @@ public class ChunkInfo implements Writable {
 	@Override
 	public void write(DataOutput arg0) throws IOException {
 		// TODO Auto-generated method stub
-		arg0.writeInt(this.id);  
-        arg0.writeInt(this.size);  
-        arg0.writeInt(this.fileNum);  
+		arg0.writeInt(this.id);
+		arg0.writeInt(this.size);
+		arg0.writeInt(this.fileNum);
         arg0.writeInt(this.chunkNum);  
         arg0.writeUTF(this.hash);  
         arg0.writeUTF(this.fileName);
