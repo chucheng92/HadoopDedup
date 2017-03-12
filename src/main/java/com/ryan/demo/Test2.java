@@ -17,7 +17,7 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 
 /**
- * 电话清单倒排索引 
+ * 电话清单倒排索引
  * Test Program
  */
 public class Test2 extends Configured implements Tool {
@@ -56,7 +56,7 @@ public class Test2 extends Configured implements Tool {
             String out = "";
             String tempValue;
 
-            for (Text value: values) {
+            for (Text value : values) {
                 tempValue = value.toString();
                 out += tempValue + "|";
             }

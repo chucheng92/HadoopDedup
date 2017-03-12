@@ -29,7 +29,7 @@ public class FileLevelDedup {
 		}
 
 
-        Job job = new Job(conf, "Job_FileLevelDeduplicator");
+        Job job = new Job(conf, "Job_FileLevelDedup");
         job.setJarByClass(FileLevelDedup.class);
         job.setMapperClass(FileLevelDedupMapper.class);
         job.setReducerClass(FileLevelDedupReducer.class);
@@ -50,8 +50,8 @@ public class FileLevelDedup {
 		LINESKIP,
 	}
 
-	// input-key is image file-path
-	// input-value is image binary-content
+	// input-key is image file path
+	// input-value is image binary content
 	private static class FileLevelDedupMapper extends
 			Mapper<Text, BytesWritable, Text, Text> {
 
@@ -63,7 +63,7 @@ public class FileLevelDedup {
 			Text md5Text = new Text(md5);
 			
 			// output-key is md5 hash
-			// output-value is image file-path
+			// output-value is image file path
 			context.write(md5Text, key);
 		}
 	}

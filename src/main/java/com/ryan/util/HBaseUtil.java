@@ -357,41 +357,7 @@ public class HBaseUtil {
         String tableName = "finger_print";
         String[] family = {"fileFamily", "extFamily"};
 
-        // 1.createTable
-//        try {
-//            createTable(tableName, family);
-//        } catch (Exception e) {
-//            logger.info("===create table error.===");
-//            e.printStackTrace();
-//        }
-
-        // 2.put
-//        put(tableName, "rowkey2", family[0], "hashvalue", "FFEEFF1");
-//        put(tableName, "rowkey3", family[0], "hashvalue", "FFEEFF1");
-
-        //3.batchPut
-//        String[] qualifier = { "id", "hashvalue", "fileNum", "chunkNum"};
-//        String[] value = {"1", "FFEEFF2", "1", "1"};
-//        batchPut(tableName, "rowkey1", family[0], qualifier, value);
-        //4.deleteAll
         deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg");
         deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg");
-//        deleteAll(tableName,"file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg");
-//        getResultByRowKey(tableName, "rowkey0");
-//        logger.info("===getResultByRowKey over.===");
-//
-//        getResultByFamily(tableName, "rowkey1", family[0]);
-//        logger.info("===getResultByFamily over.===");
-//
-//        getResultByVersion(tableName, "rowkey1", family[0], "hashvalue");
-//        logger.info("===getResultByVersion over.===");
-//
-//        scan(tableName);
-//        logger.info("===scan over.===");
-//
-//        rangeScan(tableName, "rowkey1", "rowkey4");
-//        logger.info("===rangeScan over.===");
-//
-//        logger.info("===test over.===");
     }
 }

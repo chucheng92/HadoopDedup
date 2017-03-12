@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * custom data-type
  * @author Ryan Tao
- *
+ * @github lemonjing
  */
 public class ChunkInfo implements Writable {
 

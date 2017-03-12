@@ -4,24 +4,26 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by saber on 2017/2/6.
+ * Created by Ryan Tao on 2017/2/6.
  * md5:128bit
+ *
+ * @github lemonjing
  */
 public class Md5Util {
 
-   public static String getMd5(byte[] bytes) {
-	   try {
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		md.update(bytes);
-		byte[] md5Bytes = md.digest();
-		
-		return bytesToHexString(md5Bytes);
-	} catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();	
-		return "get md5 error";
-	} 
-   }
+    public static String getMd5(byte[] bytes) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytes);
+            byte[] md5Bytes = md.digest();
+
+            return bytesToHexString(md5Bytes);
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "get md5 error";
+        }
+    }
 
     private static String bytesToHexString(byte[] bytes) {
         String hex = "";

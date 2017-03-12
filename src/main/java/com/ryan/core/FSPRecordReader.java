@@ -22,10 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FSP 固定分块算法
+ * FSP (Fixed-Sized Partition) Algorithm
  *
  * @author Ryan Tao
- * @website http://taoxiaoran.top
+ * @date 2017-02-12
+ * @github lemonjing
  */
 public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
@@ -74,14 +75,14 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
             fs = filePath.getFileSystem(conf);
             fileName = this.filePath.toString();
 
-            log.debug("===========current split=>fileName={}", fileName);
+            log.debug("===========current split => fileName={}", fileName);
 
             // HBase
             Result result = HBaseUtil.getResultByRowKey(Constant.DEFAULT_HBASE_TABLE_NAME, fileName);
             if (null != result.list()) {
                 buffer = null;
 
-                log.debug("this file-split has been processed");
+                log.debug("this file split has been processed");
             } else {
                 fsin = fs.open(filePath);
                 fsin.seek(start);

@@ -30,15 +30,16 @@ import org.slf4j.LoggerFactory;
  * output:one single sequence file
  * 
  * @author Ryan Tao
+ * @github lemonjing
  * @date 2017-2-6
  */
-public class BinaryFilesToSequenceFile extends Configured implements Tool {
+public class ToSequenceFile extends Configured implements Tool {
 
-	private static Logger logger = LoggerFactory.getLogger(BinaryFilesToSequenceFile.class);
+	private static Logger logger = LoggerFactory.getLogger(ToSequenceFile.class);
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
-			System.err.println("Usage: BinaryFilesToSequenceFile <in path for kv file> <out path for sequence file>");
+			System.err.println("Usage: ToSequenceFile <in path for kv file> <out path for sequence file>");
 			System.exit(2);
 		}
 
@@ -47,8 +48,9 @@ public class BinaryFilesToSequenceFile extends Configured implements Tool {
 		// make sure client side replication equals 1
 		// if not, even if the hdfs-site.xml replication equals 1,
 		// the replication of this file in hdfs equals 3 either
+		// enhancement:because eclipse-plugin has cache
 		conf.set("dfs.replication", "1");
-		int res = ToolRunner.run(conf, new BinaryFilesToSequenceFile(), args);
+		int res = ToolRunner.run(conf, new ToSequenceFile(), args);
 
 		System.exit(res);
 	}
@@ -58,8 +60,8 @@ public class BinaryFilesToSequenceFile extends Configured implements Tool {
 		Configuration conf = getConf();
 
 		Job job = new Job(conf, "Job_CreateSequenceFileMapper");
-		job.setJarByClass(BinaryFilesToSequenceFile.class);
-		job.setMapperClass(BinaryFilesToSequenceFileMapper.class);
+		job.setJarByClass(ToSequenceFile.class);
+		job.setMapperClass(ToSequenceFileMapper.class);
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
@@ -78,14 +80,14 @@ public class BinaryFilesToSequenceFile extends Configured implements Tool {
 		LINESKIP,
 	}
 
-	private static class BinaryFilesToSequenceFileMapper extends
+	private static class ToSequenceFileMapper extends
 			Mapper<Object, Text, Text, BytesWritable> {
 
 		@Override
 		protected void map(Object key, Text value, Context context)
 				throws IOException, InterruptedException {
 
-			logger.info("BinaryFilesToSequenceFileMapper - map method called:");
+			logger.info("ToSequenceFileMapper - map method called:");
 
 			String uri = value.toString();
 			Configuration conf = new Configuration();

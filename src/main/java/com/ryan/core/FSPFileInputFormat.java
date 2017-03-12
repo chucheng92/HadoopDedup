@@ -11,6 +11,8 @@ import java.io.IOException;
 
 /**
  * Created by Ryan Tao on 2017/2/2.
+ * @author Ryan Tao
+ * @github lemonjing
  */
 public class FSPFileInputFormat extends FileInputFormat<IntWritable, ChunkInfo>{
     @Override

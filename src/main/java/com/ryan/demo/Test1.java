@@ -29,8 +29,8 @@ public class Test1 extends Configured implements Tool {
     private static Logger log = LoggerFactory.getLogger(Test1.class);
 
     public static void main(String[] args) throws Exception {
-    	
-    	Configuration conf = new Configuration();
+
+        Configuration conf = new Configuration();
         int res = ToolRunner.run(conf, new Test1(), args);
         System.exit(res);
     }
@@ -49,7 +49,7 @@ public class Test1 extends Configured implements Tool {
                 String time = lineArr[0] + " " + lineArr[1] + " " + lineArr[2];
                 String macAddress = lineArr[6];
 
-                Text out = new Text(time  + " " + macAddress);
+                Text out = new Text(time + " " + macAddress);
 
                 context.write(NullWritable.get(), out); // 输出key\tvalue
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -76,7 +76,7 @@ public class Test1 extends Configured implements Tool {
         job.setOutputValueClass(Text.class);                // 指定输出的value的格式
 
         job.waitForCompletion(true);
-        
+
         return job.isSuccessful() ? 0 : 1;
     }
 }

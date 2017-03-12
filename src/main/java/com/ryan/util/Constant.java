@@ -1,7 +1,9 @@
 package com.ryan.util;
 
 /**
- * Created by 哓哓 on 2017/3/1.
+ * Created by Ryan Tan
+ * @date 2017-02-08
+ * @github lemonjing
  */
 public interface Constant {
     int DEFAULT_CHUNK_SIZE = 4 * 1024;
