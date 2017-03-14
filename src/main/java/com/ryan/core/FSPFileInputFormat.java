@@ -10,7 +10,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import java.io.IOException;
 
 /**
- * Created by Ryan Tao on 2017/2/2.
+ * custom FileInputFormat
+ *
  * @author Ryan Tao
  * @github lemonjing
  */

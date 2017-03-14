@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class FSPChunkLevelDedup {
     private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
@@ -88,7 +89,12 @@ public class FSPChunkLevelDedup {
         protected void map(IntWritable key, ChunkInfo value, Context context) throws IOException, InterruptedException {
             log.debug("================map start============");
 
-            String hash = Md5Util.getMd5(value.getBuffer());
+            String hash = null;
+            try {
+                hash = Md5Util.getMd5(value.getBuffer());
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
             Text reduceKey = new Text(hash);
             value.setHash(hash);
 

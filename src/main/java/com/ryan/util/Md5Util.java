@@ -4,27 +4,36 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by Ryan Tao on 2017/2/6.
- * md5:128bit
+ * Utility class to generate MD5
  *
+ * @author Ryan Tao
  * @github lemonjing
  */
 public class Md5Util {
+    /**
+     * get md5 hash from byte array
+     *
+     * @param bytes
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public static String getMd5(byte[] bytes) throws NoSuchAlgorithmException {
+        Parameters.checkNotNull(bytes);
+        Parameters.checkCondition(bytes.length >= 0);
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(bytes);
+        byte[] md5Bytes = md.digest();
 
-    public static String getMd5(byte[] bytes) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(bytes);
-            byte[] md5Bytes = md.digest();
+        return bytesToHexString(md5Bytes);
 
-            return bytesToHexString(md5Bytes);
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return "get md5 error";
-        }
     }
 
+    /**
+     * byte array to hex string
+     *
+     * @param bytes
+     * @return
+     */
     private static String bytesToHexString(byte[] bytes) {
         String hex = "";
         for (int i = 0; i < bytes.length; i++) {
@@ -34,6 +43,12 @@ public class Md5Util {
         return hex;
     }
 
+    /**
+     * byte to hex string
+     *
+     * @param b
+     * @return
+     */
     private static String byteToHexString(byte b) {
         char[] digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
                 'B', 'C', 'D', 'E', 'F'};

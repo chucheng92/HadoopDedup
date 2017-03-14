@@ -40,14 +40,12 @@ public class HDFSFileUtil {
             Path path = new Path(BINARY_FILE_PATH);
             showFiles(fs, path);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
             if (null != fs) {
                 try {
                     fs.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -61,10 +59,8 @@ public class HDFSFileUtil {
      * @param path
      */
     private static void showFiles(FileSystem fs, Path path) {
-        // TODO Auto-generated method stub
-        if (null == fs || null == path) {
-            return;
-        }
+        Parameters.checkNotNull(fs);
+        Parameters.checkNotNull(path);
         // get file lists
         try {
             FileStatus[] files = fs.listStatus(path);
@@ -84,7 +80,6 @@ public class HDFSFileUtil {
             logger.info("generate kv file, Done!");
             logger.info("the number of file:" + fileCount);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

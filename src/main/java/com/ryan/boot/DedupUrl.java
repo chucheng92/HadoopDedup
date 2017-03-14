@@ -19,9 +19,9 @@ import java.io.IOException;
 
 /**
  * File-Level Dedup
+ *
  * @author Ryan Tao
  * @github lemonjing
- * @date 2017-2-6
  */
 public class DedupUrl extends Configured implements Tool {
 

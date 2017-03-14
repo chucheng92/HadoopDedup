@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created by Ryan Tao on 2017/2/5.
  * HBase Java Util
  *
  * @author Ryan Tao

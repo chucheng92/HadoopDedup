@@ -3,15 +3,15 @@ package com.ryan.pojo;
 import java.util.List;
 
 /**
- * Created by Ryan Tao on 2017/2/5.
- * @author ryan
- *
  * to storage specific file info
+ *
+ * @author Ryan Tao
+ * @github lemonjing
  */
+@Deprecated
 public class FileInfo {
     private String fileName;
     private String Path;
-    // chunk hash list
     private List<String> chunkList;
 
     public FileInfo() {

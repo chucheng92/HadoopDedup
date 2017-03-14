@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
  * FSP (Fixed-Sized Partition) Algorithm
  *
  * @author Ryan Tao
- * @date 2017-02-12
  * @github lemonjing
  */
 public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
@@ -51,8 +50,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
     private List<Long> list = new ArrayList<>();
 
     public FSPRecordReader() {
-        log.debug("========called:FSPRecordReader Default Constructor============");
-        // TODO Auto-generated constructor stub
+        /* ... */
     }
 
     @Override
@@ -61,9 +59,9 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
         log.debug("==============called:initialize=========");
 
-        // TODO Auto-generated method stub
         conf = context.getConfiguration();
         conf.set("fs.default.name", "hdfs://Master.Hadoop:9000");
+
         this.fileSplit = (FileSplit) split;
         this.filePath = this.fileSplit.getPath();
         this.chunkId = 0;
@@ -104,7 +102,12 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         this.markChunkPostition(buffer, chunkSize);
     }
 
-    // generate chunk position and storage it in list
+    /**
+     * generate chunk position and storage it in list
+     *
+     * @param bytes
+     * @param size
+     */
     private void markChunkPostition(byte[] bytes, int size) {
         // TODO Auto-generated method stub
         if (bytes != null) {
@@ -122,7 +125,6 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
     @Override
     public boolean nextKeyValue() throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
         log.debug("==========called:nextKeyValue=============");
 
         int currentPos = this.chunkId;
@@ -156,7 +158,6 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
     @Override
     public IntWritable getCurrentKey() throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
         log.debug("========called:getCurrentKey=========");
 
         return key;
@@ -164,14 +165,12 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
     @Override
     public ChunkInfo getCurrentValue() throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
         log.debug("===========called:getCurrentValue======");
         return value;
     }
 
     @Override
     public float getProgress() throws IOException, InterruptedException {
-        // TODO Auto-generated method stub
         log.debug("==========called:getProgress==========");
         if (start == end) {
             log.debug("===========getProcess={}", 0.0f);
@@ -184,7 +183,6 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
         log.debug("=============called:close=====================");
         if (fsin != null) {
             fsin.close();

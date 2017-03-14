@@ -1,8 +1,9 @@
 package com.ryan.util;
 
 /**
- * Created by Ryan Tan
- * @date 2017-02-08
+ * default parameters
+ *
+ * @author Ryan Tao
  * @github lemonjing
  */
 public interface Constant {

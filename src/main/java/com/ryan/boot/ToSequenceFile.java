@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Ryan Tao
  * @github lemonjing
- * @date 2017-2-6
  */
 public class ToSequenceFile extends Configured implements Tool {
 
@@ -106,7 +105,6 @@ public class ToSequenceFile extends Configured implements Tool {
 				bout.close();
 			} catch (Exception e) {
 				context.getCounter(Counter.LINESKIP).increment(1);
-				// e.printStackTrace();
 			} finally {
 				IOUtils.closeStream(fsin);
 			}

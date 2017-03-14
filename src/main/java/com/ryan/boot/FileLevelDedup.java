@@ -1,6 +1,7 @@
 package com.ryan.boot;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -50,18 +51,24 @@ public class FileLevelDedup {
 		LINESKIP,
 	}
 
-	// input-key is image file path
-	// input-value is image binary content
+	/**
+	 * input-key is file path
+	 * input-value is binary content
+	 */
 	private static class FileLevelDedupMapper extends
 			Mapper<Text, BytesWritable, Text, Text> {
 
 		@Override
 		protected void map(Text key, BytesWritable value,
 				Context context) throws IOException, InterruptedException {
-			// TODO Auto-generated method stub
-			String md5 = Md5Util.getMd5(value.getBytes());
+			String md5 = null;
+			try {
+				md5 = Md5Util.getMd5(value.getBytes());
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
 			Text md5Text = new Text(md5);
-			
+
 			// output-key is md5 hash
 			// output-value is image file path
 			context.write(md5Text, key);
@@ -73,7 +80,6 @@ public class FileLevelDedup {
 		@Override
 		protected void reduce(Text key, Iterable<Text> values,
 				Context context) throws IOException, InterruptedException {
-			// TODO Auto-generated method stub
 			Text imageFilePath = null;
 			for (Text value:values) {
 				imageFilePath = value;

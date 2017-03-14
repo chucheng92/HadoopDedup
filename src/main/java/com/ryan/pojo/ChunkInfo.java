@@ -11,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * custom data-type
+ * custom chunk data type
+ *
  * @author Ryan Tao
  * @github lemonjing
  */
