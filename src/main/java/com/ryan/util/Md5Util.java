@@ -28,13 +28,17 @@ public class Md5Util {
 
     }
 
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+        System.out.println(getMd5("Hello".getBytes()));
+    }
+
     /**
      * byte array to hex string
      *
      * @param bytes
      * @return
      */
-    private static String bytesToHexString(byte[] bytes) {
+    public static String bytesToHexString(byte[] bytes) {
         String hex = "";
         for (int i = 0; i < bytes.length; i++) {
             hex += byteToHexString(bytes[i]);
@@ -49,7 +53,7 @@ public class Md5Util {
      * @param b
      * @return
      */
-    private static String byteToHexString(byte b) {
+    public static String byteToHexString(byte b) {
         char[] digit = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
                 'B', 'C', 'D', 'E', 'F'};
         char[] tempArr = new char[2];

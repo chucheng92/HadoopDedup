@@ -33,6 +33,9 @@ public class HBaseUtil {
      * @throws Exception
      */
     public static void createTable(String tableName, String[] family) throws Exception {
+        Parameters.checkNotNull(conf);
+        Parameters.checkNotNull(tableName);
+        Parameters.checkCondition(tableName.length() > 0);
         HBaseAdmin admin = new HBaseAdmin(conf);
         HTableDescriptor descriptor = new HTableDescriptor(tableName);
         for (int i = 0; i < family.length; i++) {

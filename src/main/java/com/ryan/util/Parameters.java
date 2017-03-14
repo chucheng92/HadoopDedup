@@ -3,7 +3,7 @@ package com.ryan.util;
 /**
  * Utility class to test parameters validity.
  *
- * @author Osman KOCAK
+ * @author Ryan Tao
  */
 public final class Parameters {
     /**
