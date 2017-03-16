@@ -1,7 +1,6 @@
 package com.ryan.security;
 
 import com.ryan.util.LittleEndian;
-import com.ryan.util.Md5Util;
 import com.ryan.util.Parameters;
 
 import java.util.Arrays;
@@ -34,26 +33,24 @@ final class Keccak extends AbstractDigest {
     private final long[] D;
     private final int blockLen;
     private final byte[] buffer;
-    private int bufferLen;
+    private int inputOffset;
 
     /**
      * Creates a new ready to use {@code Keccak}.
      *
      * @param length the digest length (in bytes).
-     * @throws IllegalArgumentException if {@code length} is not one of 28,
-     *                                  32, 48 or 64.
+     * @throws IllegalArgumentException if {@code length} is not one of 28, 32, 48 or 64.
      */
     Keccak(int length) {
         super("Keccak-" + length * 8, length);
-        Parameters.checkCondition(length == 28 || length == 32
-                || length == 48 || length == 64);
+        Parameters.checkCondition(length == 28 || length == 32 || length == 48 || length == 64);
         this.A = new long[25];
         this.B = new long[25];
         this.C = new long[5];
         this.D = new long[5];
-        this.blockLen = 200 - 2 * length;
+        this.blockLen = 200 - 2 * length; // 144B(1152bit) -> Sponge R
         this.buffer = new byte[blockLen];
-        this.bufferLen = 0;
+        this.inputOffset = 0;
     }
 
     @Override
@@ -61,15 +58,18 @@ final class Keccak extends AbstractDigest {
         for (int i = 0; i < 25; i++) {
             A[i] = 0L;
         }
-        bufferLen = 0;
+        inputOffset = 0;
         return this;
     }
 
     @Override
     public Digest update(byte input) {
-        buffer[bufferLen] = input;
-            if (++bufferLen == blockLen) {
-                processBuffer();
+        buffer[inputOffset] = input;
+
+        System.out.println(buffer);
+
+        if (++inputOffset == blockLen) {
+            processBuffer();
         }
         return this;
     }
@@ -77,12 +77,12 @@ final class Keccak extends AbstractDigest {
     @Override
     public Digest update(byte[] input, int off, int len) {
         while (len > 0) {
-            int cpLen = Math.min(blockLen - bufferLen, len);
-            System.arraycopy(input, off, buffer, bufferLen, cpLen);
-            bufferLen += cpLen;
+            int cpLen = Math.min(blockLen - inputOffset, len);
+            System.arraycopy(input, off, buffer, inputOffset, cpLen);
+            inputOffset += cpLen;
             off += cpLen;
             len -= cpLen;
-            if (bufferLen == blockLen) {
+            if (inputOffset == blockLen) {
                 processBuffer();
             }
         }
@@ -90,10 +90,9 @@ final class Keccak extends AbstractDigest {
     }
 
     public static void main(String[] args) {
-        byte[] bytes = "".getBytes();
-        byte[] keccakByte = Digests.keccak256().digest(bytes);
-        String keccakHash = Md5Util.bytesToHexString(keccakByte);
-        System.out.println(keccakHash);
+        System.out.println(0xFF);
+        System.out.println((byte) 0xFF);
+        System.out.println((3 << 33) == (3 << 1));
     }
 
     @Override
@@ -108,55 +107,76 @@ final class Keccak extends AbstractDigest {
         return Arrays.copyOf(tmp, length());
     }
 
+    /**
+     * Initialization and padding
+     */
     private void addPadding() {
-        if (bufferLen + 1 == buffer.length) {
-            buffer[bufferLen] = (byte) 0x81;
+        if (inputOffset + 1 == buffer.length) {
+            buffer[inputOffset] = (byte) 0x80;
         } else {
-            buffer[bufferLen] = (byte) 0x01;
-            for (int i = bufferLen + 1; i < buffer.length - 1; i++) {
+            buffer[inputOffset] = (byte) 0x06;
+            for (int i = inputOffset + 1; i < buffer.length - 1; i++) {
                 buffer[i] = 0;
             }
             buffer[buffer.length - 1] = (byte) 0x80;
         }
     }
 
+    /**
+     * Absorbing phase
+     */
     private void processBuffer() {
         for (int i = 0; i < buffer.length; i += 8) {
             A[i >>> 3] ^= LittleEndian.decodeLong(buffer, i);
         }
         keccakf();
-        bufferLen = 0;
+        inputOffset = 0;
     }
 
+    /**
+     * Squeezing phase
+     * 24 rounds permutation
+     */
     private void keccakf() {
         for (int n = 0; n < 24; n++) {
             round(n);
         }
     }
 
+    /**
+     * permutation
+     *
+     * @param n
+     */
     private void round(int n) {
+        // θ step
         for (int x = 0; x < 5; x++) {
-            C[x] = A[index(x, 0)] ^ A[index(x, 1)] ^ A[index(x, 2)]
-                    ^ A[index(x, 3)] ^ A[index(x, 4)];
+            C[x] = A[index(x, 0)] ^ A[index(x, 1)] ^ A[index(x, 2)] ^ A[index(x, 3)] ^ A[index(x, 4)];
         }
         for (int x = 0; x < 5; x++) {
             D[x] = C[index(x - 1)] ^ rotate(C[index(x + 1)], 1);
+
+        }
+        for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 A[index(x, y)] ^= D[x];
             }
         }
+        // ρ and π steps
         for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 int i = index(x, y);
                 B[index(y, x * 2 + 3 * y)] = rotate(A[i], R[i]);
             }
         }
+        // χ step
         for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 int i = index(x, y);
                 A[i] = B[i] ^ (~B[index(x + 1, y)] & B[index(x + 2, y)]);
             }
         }
+        //
         A[0] ^= RC[n];
     }
 
