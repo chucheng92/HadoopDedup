@@ -1,6 +1,7 @@
 package com.ryan.security;
 
 import com.ryan.util.LittleEndian;
+import com.ryan.util.Md5Util;
 import com.ryan.util.Parameters;
 
 import java.util.Arrays;
@@ -90,9 +91,11 @@ final class Keccak extends AbstractDigest {
     }
 
     public static void main(String[] args) {
-        System.out.println(0xFF);
-        System.out.println((byte) 0xFF);
-        System.out.println((3 << 33) == (3 << 1));
+        byte[] bytes = "".getBytes();
+        Digest d = new Keccak(28); //Keccak-224
+        d.update(bytes);
+        byte[] keccakBytes = d.digest();
+        System.out.println(Md5Util.bytesToHexString(keccakBytes));
     }
 
     @Override
@@ -176,7 +179,7 @@ final class Keccak extends AbstractDigest {
                 A[i] = B[i] ^ (~B[index(x + 1, y)] & B[index(x + 2, y)]);
             }
         }
-        //
+        // ι step
         A[0] ^= RC[n];
     }
 
