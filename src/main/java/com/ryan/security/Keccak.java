@@ -11,7 +11,12 @@ import java.util.Arrays;
  *
  * @author Ryan Tao
  */
+
 final class Keccak extends AbstractDigest {
+
+    /**
+     * round constants RC[i]
+     */
     private static final long[] RC = new long[]{
             0x0000000000000001L, 0x0000000000008082L, 0x800000000000808aL,
             0x8000000080008000L, 0x000000000000808bL, 0x0000000080000001L,
@@ -23,6 +28,9 @@ final class Keccak extends AbstractDigest {
             0x8000000000008080L, 0x0000000080000001L, 0x8000000080008008L
     };
 
+    /**
+     * Rotation offsets
+     */
     private static final int[] R = new int[]{
             0, 1, 62, 28, 27, 36, 44, 6, 55, 20, 3, 10, 43,
             25, 39, 41, 45, 15, 21, 8, 18, 2, 61, 56, 14
@@ -49,7 +57,7 @@ final class Keccak extends AbstractDigest {
         this.B = new long[25];
         this.C = new long[5];
         this.D = new long[5];
-        this.blockLen = 200 - 2 * length; // 144B(1152bit) -> Sponge R
+        this.blockLen = 200 - 2 * length; // Sponge R -> 144B(1152bit)
         this.buffer = new byte[blockLen];
         this.inputOffset = 0;
     }
