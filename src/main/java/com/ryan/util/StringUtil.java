@@ -9,28 +9,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Ryan Tao
  * @github lemonjing
  */
-public class Md5Util {
-    /**
-     * get md5 hash from byte array
-     *
-     * @param bytes
-     * @return
-     * @throws NoSuchAlgorithmException
-     */
-    public static String getMd5(byte[] bytes) throws NoSuchAlgorithmException {
-        Parameters.checkNotNull(bytes);
-        Parameters.checkCondition(bytes.length >= 0);
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(bytes);
-        byte[] md5Bytes = md.digest();
-
-        return bytesToHexString(md5Bytes);
-
-    }
-
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println(getMd5("Hello".getBytes()));
-    }
+public class StringUtil {
 
     /**
      * byte array to hex string
