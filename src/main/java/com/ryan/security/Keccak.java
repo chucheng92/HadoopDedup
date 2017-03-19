@@ -101,6 +101,7 @@ final class Keccak extends AbstractDigest {
     public byte[] digest() {
         addPadding();
         processBuffer();
+        // Squeezing phase
         byte[] tmp = new byte[length() * 8];
         for (int i = 0; i < length(); i += 8) {
             LittleEndian.encode(A[i >>> 3], tmp, i);
@@ -136,7 +137,6 @@ final class Keccak extends AbstractDigest {
     }
 
     /**
-     * Squeezing phase
      * 24 rounds permutation
      */
     private void keccakf() {
