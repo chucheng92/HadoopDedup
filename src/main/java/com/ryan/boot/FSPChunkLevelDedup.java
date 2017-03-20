@@ -2,11 +2,12 @@ package com.ryan.boot;
 
 import com.ryan.core.FSPFileInputFormat;
 import com.ryan.pojo.ChunkInfo;
+import com.ryan.security.Digest;
+import com.ryan.security.Digests;
 import com.ryan.util.Constant;
 import com.ryan.util.HBaseUtil;
 import com.ryan.util.HDFSFileUtil;
-import com.ryan.util.Md5Util;
-
+import com.ryan.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Result;
@@ -25,11 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class FSPChunkLevelDedup {
     private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
-
+    private static final Digest digest = Digests.md5();
     private static final String HDFS_PATH = "hdfs://Master.Hadoop:9000/usr/local/hadoop";
 
     public static void main(String[] args) throws Exception {
@@ -90,11 +90,9 @@ public class FSPChunkLevelDedup {
             log.debug("================map start============");
 
             String hash = null;
-            try {
-                hash = Md5Util.getMd5(value.getBuffer());
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+            digest.update(value.getBuffer());
+            hash = StringUtils.bytesToHexString(digest.digest());
+
             Text reduceKey = new Text(hash);
             value.setHash(hash);
 
