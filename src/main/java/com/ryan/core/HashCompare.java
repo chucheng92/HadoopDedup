@@ -13,7 +13,7 @@ public class HashCompare {
     private static final Logger log = LoggerFactory.getLogger(HashCompare.class);
 
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-        File file = new File("src/main/resources/hamlet.txt");
+        File file = new File("src/main/resources/hamlet1.txt");
         byte[] bytes = transformToBytes(file);
         System.out.println("======len=" + bytes.length);
     }
