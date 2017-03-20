@@ -1,8 +1,10 @@
 package com.ryan.boot;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
+import com.ryan.security.Digest;
+import com.ryan.security.Digests;
+import com.ryan.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
@@ -16,18 +18,18 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import com.ryan.util.Md5Util;
-
 public class FileLevelDedup {
 
-	public static void main(String[] args) throws Exception {
-		Configuration conf = new Configuration();
+    private static final Digest digest = Digests.md5();
 
-		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		if (otherArgs.length != 2) {
-			System.err.println("Usage: FileLevelDedup <in> <out>");
-			System.exit(2);
-		}
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+
+        String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+        if (otherArgs.length != 2) {
+            System.err.println("Usage: FileLevelDedup <in> <out>");
+            System.exit(2);
+        }
 
 
         Job job = new Job(conf, "Job_FileLevelDedup");
@@ -45,47 +47,44 @@ public class FileLevelDedup {
         job.waitForCompletion(true);
 
         System.exit(job.isSuccessful() ? 0 : 1);
-	}
+    }
 
-	enum Counter {
-		LINESKIP,
-	}
+    enum Counter {
+        LINESKIP,
+    }
 
-	/**
-	 * input-key is file path
-	 * input-value is binary content
-	 */
-	private static class FileLevelDedupMapper extends
-			Mapper<Text, BytesWritable, Text, Text> {
+    /**
+     * input-key is file path
+     * input-value is binary content
+     */
+    private static class FileLevelDedupMapper extends
+            Mapper<Text, BytesWritable, Text, Text> {
 
-		@Override
-		protected void map(Text key, BytesWritable value,
-				Context context) throws IOException, InterruptedException {
-			String md5 = null;
-			try {
-				md5 = Md5Util.getMd5(value.getBytes());
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
-			Text md5Text = new Text(md5);
+        @Override
+        protected void map(Text key, BytesWritable value,
+                           Context context) throws IOException, InterruptedException {
+            String md5 = null;
+            digest.update(value.getBytes());
+            md5 = StringUtils.bytesToHexString(digest.digest());
+            Text md5Text = new Text(md5);
 
-			// output-key is md5 hash
-			// output-value is image file path
-			context.write(md5Text, key);
-		}
-	}
+            // output-key is md5 hash
+            // output-value is image file path
+            context.write(md5Text, key);
+        }
+    }
 
-	private static class FileLevelDedupReducer extends
-			Reducer<Text, Text, Text, Text> {
-		@Override
-		protected void reduce(Text key, Iterable<Text> values,
-				Context context) throws IOException, InterruptedException {
-			Text imageFilePath = null;
-			for (Text value:values) {
-				imageFilePath = value;
-				break;
-			}	
-			context.write(imageFilePath, key);
-		}
-	}
+    private static class FileLevelDedupReducer extends
+            Reducer<Text, Text, Text, Text> {
+        @Override
+        protected void reduce(Text key, Iterable<Text> values,
+                              Context context) throws IOException, InterruptedException {
+            Text imageFilePath = null;
+            for (Text value : values) {
+                imageFilePath = value;
+                break;
+            }
+            context.write(imageFilePath, key);
+        }
+    }
 }
