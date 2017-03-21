@@ -91,15 +91,15 @@ public class FSPChunkLevelDedup {
 
             String hash = null;
             digest.update(value.getBuffer());
-            hash = StringUtils.bytesToHexString(digest.digest());
+            byte[] tempBytes = digest.digest();
+            hash = StringUtils.bytesToHexString(tempBytes);
 
             Text reduceKey = new Text(hash);
             value.setHash(hash);
 
             String preValue;
             // hbase
-            Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME,
-                    value.getFileName(), "fileFamily", "chunksQualifier");
+            Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName(), "fileFamily", "chunksQualifier");
             if (result != null) {
                 preValue = Bytes.toString(result.list().get(0).getValue());
             } else {
