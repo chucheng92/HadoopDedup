@@ -9,7 +9,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RawLocalFileSystem;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.Text;
@@ -33,9 +32,9 @@ import org.slf4j.LoggerFactory;
  * @author Ryan Tao
  * @github lemonjing
  */
-public class ToSequenceFile extends Configured implements Tool {
+public class ToHAFile extends Configured implements Tool {
 
-	private static Logger logger = LoggerFactory.getLogger(ToSequenceFile.class);
+	private static Logger logger = LoggerFactory.getLogger(ToHAFile.class);
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -50,7 +49,7 @@ public class ToSequenceFile extends Configured implements Tool {
 		// the replication of this file in hdfs equals 3 either
 		// enhancement:because eclipse-plugin has cache
 		conf.set("dfs.replication", "1");
-		int res = ToolRunner.run(conf, new ToSequenceFile(), args);
+		int res = ToolRunner.run(conf, new ToHAFile(), args);
 
 		System.exit(res);
 	}
@@ -60,8 +59,8 @@ public class ToSequenceFile extends Configured implements Tool {
 		Configuration conf = getConf();
 
 		Job job = new Job(conf, "Job_CreateSequenceFileMapper");
-		job.setJarByClass(ToSequenceFile.class);
-		job.setMapperClass(ToSequenceFileMapper.class);
+		job.setJarByClass(ToHAFile.class);
+		job.setMapperClass(ToHAFileMapper.class);
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
@@ -80,7 +79,7 @@ public class ToSequenceFile extends Configured implements Tool {
 		LINESKIP,
 	}
 
-	private static class ToSequenceFileMapper extends
+	private static class ToHAFileMapper extends
 			Mapper<Object, Text, Text, BytesWritable> {
 
 		@Override
