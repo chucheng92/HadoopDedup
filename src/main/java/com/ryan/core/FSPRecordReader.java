@@ -46,7 +46,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
     private byte[] tempBytes = new byte[2];
     private IntWritable key = new IntWritable(0);
     private ChunkInfo value = new ChunkInfo(0, chunkSize, 0, 0, tempBytes
-            , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME, -1);
+            , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME, -1, Constant.DEFAULT_CHUNK_PATH);
     private List<Long> list = new ArrayList<>();
 
     public FSPRecordReader() {
@@ -148,6 +148,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         value.setHash(Constant.DEFAULT_HASH_VALUE);
         value.setFileName(fileName);
         value.setOffset(currentPos);
+        value.setChunkPath(Constant.DEFAULT_CHUNK_PATH);
 
         log.debug("==========fileName={}", fileName);
 

@@ -99,7 +99,7 @@ public class FSPChunkLevelDedup {
 
             String preValue;
             // hbase
-            Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName(), "fileFamily", "chunksQualifier");
+            Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName(), "fileFamily", "chunkQualifier");
             if (result != null) {
                 preValue = Bytes.toString(result.list().get(0).getValue());
             } else {
@@ -107,13 +107,13 @@ public class FSPChunkLevelDedup {
             }
             String curValue = preValue + value.getId() + ",";
             HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
-                    , "fileFamily", "chunksQualifier", curValue);
+                    , "fileFamily", "chunkQualifier", curValue);
 
-            log.info("===file has been written to hbase successfully======");
+            log.info("===chunkList with specific file has been written to hbase successfully======");
 
             context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
                     , value.getFileNum(), value.getChunkNum(), value.getBuffer()
-                    , value.getHash(), value.getFileName(), value.getOffset()));
+                    , value.getHash(), value.getFileName(), value.getOffset(), value.getChunkPath()));
 
             log.debug("=============map end============");
         }
@@ -130,6 +130,7 @@ public class FSPChunkLevelDedup {
             byte[] buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
             boolean flag = true;
             String fileName = Constant.DEFAULT_FILE_NAME;
+            String chunkAddress = Constant.DEFAULT_CHUNK_PATH;
             // duplicate chunks
             for (ChunkInfo chunk : values) {
                 chunkNumCounter++;
@@ -138,7 +139,8 @@ public class FSPChunkLevelDedup {
                     offset = chunk.getOffset();
                     buffer = chunk.getBuffer();
                     try {
-                        Path chunkPath = new Path(HDFS_PATH + "/chunk/" + "id" + id + "_" + key.toString() + ".blob");
+                        chunkAddress = HDFS_PATH + "/chunk/" + "id" + id + "_" + key.toString() + ".blob";
+                        Path chunkPath = new Path(chunkAddress);
                         HDFSFileUtil.createHDFSFile(chunkPath, buffer);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -162,6 +164,7 @@ public class FSPChunkLevelDedup {
             chunkInfo.setHash(key.toString());
             chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
+            chunkInfo.setChunkPath(chunkAddress);
             id++;
             context.write(new Text(chunkInfo.toString()), NullWritable.get());
         }

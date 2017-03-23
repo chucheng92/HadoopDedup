@@ -3,10 +3,14 @@ package com.ryan.core;
 import com.ryan.security.Digest;
 import com.ryan.security.Digests;
 import com.ryan.util.StringUtils;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 /**
  * <p>this class used to be compare MD5 & SHA-1 with keccak</p>
@@ -32,97 +36,35 @@ public class HashCompare {
         Digest d6 = Digests.keccak384();
         Digest d7 = Digests.keccak512();
 
-        // run time
+        // run time sha224
         long startTime = System.currentTimeMillis();
-        shaPerformance(bytes1, d1);
+        // bouncy castle SHA224
+        for (int i = 0; i < 100; i++) {
+            Security.addProvider(new BouncyCastlePQCProvider());
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA224");
+                md.update(bytes1);
+                byte[] sha224Bytes = md.digest();
+            } catch (NoSuchAlgorithmException e) {
+                //do nothing
+            }
+        }
+
         long endTime = System.currentTimeMillis();
-        double res = (endTime - startTime);
-        System.out.println("run time@md5:" + res);
+        double res = (endTime - startTime) * 1.0/ 100;
+        System.out.println("run time@sha224:" + res);
 
-        // cascade rate md5
-        byte[] md5Bytes1 = shaPerformance(bytes1, d1);
-        byte[] md5Bytes2 = shaPerformance(bytes2, d1);
-        int countMD5 = 0;
-        for (int i = 0; i < md5Bytes1.length; i++) {
-            if (md5Bytes1[i] == md5Bytes2[i]) {
-                countMD5++;
-            }
+        // run time keccak224
+        long startTime2 = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            d4.update(bytes1);
+            byte[] keccak224Bytes = d4.digest();
         }
-        System.out.println("cascade rate@md5:" + countMD5);
-
-        // cascade rate sha1
-        byte[] sha1Bytes1 = shaPerformance(bytes1, d2);
-        byte[] sha1Bytes2 = shaPerformance(bytes2, d2);
-        int countSHA1 = 0;
-        for (int i = 0; i < sha1Bytes1.length; i++) {
-            if (sha1Bytes1[i] == sha1Bytes2[i]) {
-                countSHA1++;
-            }
-        }
-        System.out.println("cascade rate@sha1:" + countSHA1);
-
-        // cascade rate sha256
-        byte[] sha256Bytes1 = shaPerformance(bytes1, d3);
-        byte[] sha256Bytes2 = shaPerformance(bytes2, d3);
-        int countSHA256 = 0;
-        for (int i = 0; i < sha256Bytes1.length; i++) {
-            if (sha256Bytes1[i] == sha256Bytes2[i]) {
-                countSHA256++;
-            }
-        }
-        System.out.println("cascade rate@sha256:" + countSHA256);
-
-        // cascade rate keccak224
-        byte[] keccak224Bytes1 = shaPerformance(bytes1, d4);
-        byte[] keccak224Bytes2 = shaPerformance(bytes2, d4);
-        int countKeccak224 = 0;
-        for (int i = 0; i < keccak224Bytes1.length; i++) {
-            if (keccak224Bytes1[i] == keccak224Bytes2[i]) {
-                countKeccak224++;
-            }
-        }
-        System.out.println("cascade rate@keccak224:" + countKeccak224);
-
-        // cascade rate keccak256
-        byte[] keccak256Bytes1 = shaPerformance(bytes1, d5);
-        byte[] keccak256Bytes2 = shaPerformance(bytes2, d5);
-        int countKeccak256 = 0;
-        for (int i = 0; i < keccak256Bytes1.length; i++) {
-            if (keccak256Bytes1[i] == keccak256Bytes2[i]) {
-                countKeccak256++;
-            }
-        }
-        System.out.println("cascade rate@keccak256:" + countKeccak256);
-
-        // cascade rate keccak384
-        byte[] keccak384Bytes1 = shaPerformance(bytes1, d6);
-        byte[] keccak384Bytes2 = shaPerformance(bytes2, d6);
-        int countKeccak384 = 0;
-        for (int i = 0; i < keccak384Bytes1.length; i++) {
-            if (keccak384Bytes1[i] == keccak384Bytes2[i]) {
-                countKeccak384++;
-            }
-        }
-        System.out.println("cascade rate@keccak384:" + countKeccak384);
-
-        // cascade rate keccak512
-        byte[] keccak512Bytes1 = shaPerformance(bytes1, d7);
-        byte[] keccak512Bytes2 = shaPerformance(bytes2, d7);
-        int countKeccak512 = 0;
-        for (int i = 0; i < keccak512Bytes1.length; i++) {
-            if (keccak512Bytes1[i] == keccak512Bytes2[i]) {
-                countKeccak512++;
-            }
-        }
-        System.out.println("cascade rate@keccak512:" + countKeccak512);
+        long endTime2 = System.currentTimeMillis();
+        double res2 = (endTime2 - startTime2) * 1.0/ 100;
+        System.out.println("run time@keccak224:" + res2);
     }
 
-    public static byte[] shaPerformance(byte[] bytes, Digest d) {
-        d.update(bytes);
-        byte[] shaBytes = d.digest();
-
-        return shaBytes;
-    }
 
     private static byte[] transformToBytes(File file) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
