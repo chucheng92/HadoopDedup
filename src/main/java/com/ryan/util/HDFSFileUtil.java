@@ -15,9 +15,9 @@ public class HDFSFileUtil {
 
     private static Logger logger = LoggerFactory.getLogger(HDFSFileUtil.class);
 
-    private static final String BINARY_FILE_PATH = "/usr/local/hadoop/imgset";
+    private static final String BINARY_FILE_PATH = "/usr/local/hadoop/600in";
 
-    private static final String KV_FILE_PATH = "/usr/local/hadoop/kv_file.txt";
+    private static final String KV_FILE_PATH = "/usr/local/hadoop/kv_file_600in.txt";
 
     private static long fileCount = 0L;
 

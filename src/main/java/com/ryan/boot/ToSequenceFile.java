@@ -57,6 +57,8 @@ public class ToSequenceFile extends Configured implements Tool {
 
 	@Override
 	public int run(String[] args) throws Exception {
+		long time1 = System.currentTimeMillis();
+		
 		Configuration conf = getConf();
 
 		Job job = new Job(conf, "Job_CreateSequenceFileMapper");
@@ -70,9 +72,12 @@ public class ToSequenceFile extends Configured implements Tool {
 		job.setOutputValueClass(BytesWritable.class);
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
-
+		
 		job.waitForCompletion(true);
-
+		
+		long time2 = System.currentTimeMillis();
+		logger.debug("hafile consume time: " + (time2-time1)*1.0/1000 + "s");
+		
 		return job.isSuccessful() ? 0 : 1;
 	}
 
