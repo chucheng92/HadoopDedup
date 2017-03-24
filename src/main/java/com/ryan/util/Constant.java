@@ -11,5 +11,4 @@ public interface Constant {
     String DEFAULT_HASH_VALUE = "default_hash";
     String DEFAULT_FILE_NAME = "default_filename";
     String DEFAULT_HBASE_TABLE_NAME="finger_print";
-    String DEFAULT_CHUNK_PATH="default_chunk_path";
 }

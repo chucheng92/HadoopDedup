@@ -353,12 +353,4 @@ public class HBaseUtil {
             rs.close();
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        String tableName = "finger_print";
-        String[] family = {"fileFamily", "extFamily"};
-
-        deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg");
-        deleteAll(tableName, "file:/Users/saber/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg");
-    }
 }

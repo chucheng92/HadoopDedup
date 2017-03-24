@@ -6,7 +6,5 @@
 .classpath
 .project
 /docs/~$*.docx
-/docs/*.tmp
-/data/dedup/imgset
-/data/dedup/urlin
-/data/dedup/urlout
+docs/*.tmp
+/docs/hadoop.docx

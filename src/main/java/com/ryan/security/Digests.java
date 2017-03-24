@@ -45,15 +45,6 @@ public final class Digests {
      *
      * @return a new SHA-256 {@code Digest} instance.
      */
-    public static Digest sha224() {
-        return BuiltInDigest.create("SHA-224");
-    }
-
-    /**
-     * Returns a new SHA-256 {@code Digest} instance.
-     *
-     * @return a new SHA-256 {@code Digest} instance.
-     */
     public static Digest sha256() {
         return BuiltInDigest.create("SHA-256");
     }
