@@ -111,11 +111,11 @@ public class FSPChunkLevelDedup {
             HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
                     , "fileFamily", "chunksQualifier", curValue);
 
-            log.info("===file has been written to hbase successfully======");
+            log.info("===block file has been written to hbase successfully======");
 
             context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
                     , value.getFileNum(), value.getChunkNum(), value.getBuffer()
-                    , value.getHash(), value.getFileName(), value.getOffset()));
+                    , value.getHash(), value.getFileName(), value.getOffset(), value.getBlockAddress()));
 
             log.debug("=============map end============");
         }
@@ -132,6 +132,7 @@ public class FSPChunkLevelDedup {
             byte[] buffer = new byte[Constant.DEFAULT_CHUNK_SIZE];
             boolean flag = true;
             String fileName = Constant.DEFAULT_FILE_NAME;
+            String blockAddress = Constant.DEFAULT_BLOCK_ADDRESS;
             // duplicate chunks
             for (ChunkInfo chunk : values) {
                 chunkNumCounter++;
@@ -140,7 +141,8 @@ public class FSPChunkLevelDedup {
                     offset = chunk.getOffset();
                     buffer = chunk.getBuffer();
                     try {
-                        Path chunkPath = new Path(HDFS_PATH + "/chunk/" + "id" + id + "_" + key.toString() + ".blob");
+                        blockAddress = HDFS_PATH + "/chunk/" + "id" + id + "_" + key.toString() + ".blob";
+                        Path chunkPath = new Path(blockAddress);
                         HDFSFileUtil.createHDFSFile(chunkPath, buffer);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -164,6 +166,7 @@ public class FSPChunkLevelDedup {
             chunkInfo.setHash(key.toString());
             chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
+            chunkInfo.setBlockAddress(blockAddress);
             id++;
             context.write(new Text(chunkInfo.toString()), NullWritable.get());
         }

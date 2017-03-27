@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.ryan.util.Constant;
 import org.apache.hadoop.io.Writable;
@@ -28,6 +29,7 @@ public class ChunkInfo implements Writable {
 	private String hash; //chunk hash value
 	private String fileName; // belong to first old file(full hdfs path)
 	private int offset; //chunk offset
+	private String blockAddress;
 
 
 	public ChunkInfo() {
@@ -40,10 +42,11 @@ public class ChunkInfo implements Writable {
 		this.hash = Constant.DEFAULT_HASH_VALUE;
 		this.fileName = Constant.DEFAULT_FILE_NAME;
         this.offset = -1;
+		this.blockAddress = Constant.DEFAULT_BLOCK_ADDRESS;
 	}
 	
 	public ChunkInfo(int id, int size, int fileNum, int chunkNum,
-			byte[] buffer, String hash, String fileName, int offset) {
+			byte[] buffer, String hash, String fileName, int offset, String blockAddress) {
 		this.id = id;
 		this.size = size;
 		this.fileNum = fileNum;
@@ -52,8 +55,15 @@ public class ChunkInfo implements Writable {
 		this.hash = hash;
 		this.fileName = fileName;
         this.offset = offset;
+		this.blockAddress = blockAddress;
 	}
 
+	/**
+	 * deserialization
+	 *
+	 * @param arg0
+	 * @throws IOException
+     */
 	@Override
 	public void readFields(DataInput arg0) throws IOException {
 		// TODO Auto-generated method stub
@@ -66,11 +76,18 @@ public class ChunkInfo implements Writable {
 			this.hash = arg0.readUTF();
 			this.fileName = arg0.readUTF();
             this.offset = arg0.readInt();
+			this.blockAddress = arg0.readUTF();
 		} catch(EOFException e) {
 			return;
 		}
 	}
 
+	/**
+	 * serialization
+	 *
+	 * @param arg0
+	 * @throws IOException
+     */
 	@Override
 	public void write(DataOutput arg0) throws IOException {
 		// TODO Auto-generated method stub
@@ -81,23 +98,24 @@ public class ChunkInfo implements Writable {
         arg0.writeUTF(this.hash);  
         arg0.writeUTF(this.fileName);
         arg0.writeInt(this.offset);
+		arg0.writeUTF(this.blockAddress);
 	}
 
-    @Override
-    public String toString() {
-        return "ChunkInfo{" +
-                "id=" + id +
-                ", size=" + size +
-                ", fileNum=" + fileNum +
-                ", chunkNum=" + chunkNum +
-                ", buffer=[ignore]"  +
-                ", hash='" + hash + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", offset=" + offset +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ChunkInfo{" +
+				"id=" + id +
+				", size=" + size +
+				", fileNum=" + fileNum +
+				", chunkNum=" + chunkNum +
+				", hash='" + hash + '\'' +
+				", fileName='" + fileName + '\'' +
+				", offset=" + offset +
+				", blockAddress='" + blockAddress + '\'' +
+				'}';
+	}
 
-    // =========== getters/setters =============
+	// =========== getters/setters =============
 	public int getId() {
 		return id;
 	}
@@ -161,4 +179,12 @@ public class ChunkInfo implements Writable {
     public void setOffset(int offset) {
         this.offset = offset;
     }
+
+	public String getBlockAddress() {
+		return blockAddress;
+	}
+
+	public void setBlockAddress(String blockAddress) {
+		this.blockAddress = blockAddress;
+	}
 }
