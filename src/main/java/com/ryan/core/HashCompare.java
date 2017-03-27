@@ -41,7 +41,6 @@ public class HashCompare {
         for (int i = 0; i < 100; i++) {
             Security.addProvider(new BouncyCastlePQCProvider());
             try {
-                log.debug("Hello");
                 MessageDigest md = MessageDigest.getInstance("SHA224");
                 md.update(bytes1);
                 byte[] sha224Bytes = md.digest();
