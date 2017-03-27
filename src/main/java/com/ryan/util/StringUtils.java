@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Ryan Tao
  * @github lemonjing
  */
-public class Md5Util {
+public class StringUtils {
     /**
      * get md5 hash from byte array
      *

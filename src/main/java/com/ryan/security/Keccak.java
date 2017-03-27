@@ -1,7 +1,7 @@
 package com.ryan.security;
 
 import com.ryan.util.LittleEndian;
-import com.ryan.util.Md5Util;
+import com.ryan.util.StringUtils;
 import com.ryan.util.Parameters;
 
 import java.util.Arrays;
@@ -92,7 +92,7 @@ final class Keccak extends AbstractDigest {
     public static void main(String[] args) {
         byte[] bytes = "".getBytes();
         byte[] keccakByte = Digests.keccak224().digest(bytes);
-        String keccakHash = Md5Util.bytesToHexString(keccakByte);
+        String keccakHash = StringUtils.bytesToHexString(keccakByte);
         System.out.println();
         System.out.println(keccakHash);
     }
