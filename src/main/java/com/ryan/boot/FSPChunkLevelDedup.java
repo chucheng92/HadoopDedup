@@ -5,7 +5,7 @@ import com.ryan.pojo.ChunkInfo;
 import com.ryan.util.Constant;
 import com.ryan.util.HBaseUtil;
 import com.ryan.util.HDFSFileUtil;
-import com.ryan.util.StringUtils;
+import com.ryan.util.Md5Util;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -91,7 +91,7 @@ public class FSPChunkLevelDedup {
 
             String hash = null;
             try {
-                hash = StringUtils.getMd5(value.getBuffer());
+                hash = Md5Util.getMd5(value.getBuffer());
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }

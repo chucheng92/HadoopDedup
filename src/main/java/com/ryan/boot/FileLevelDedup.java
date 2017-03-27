@@ -16,7 +16,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-import com.ryan.util.StringUtils;
+import com.ryan.util.Md5Util;
 
 public class FileLevelDedup {
 
@@ -63,7 +63,7 @@ public class FileLevelDedup {
 				Context context) throws IOException, InterruptedException {
 			String md5 = null;
 			try {
-				md5 = StringUtils.getMd5(value.getBytes());
+				md5 = Md5Util.getMd5(value.getBytes());
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
