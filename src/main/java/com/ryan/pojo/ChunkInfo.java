@@ -105,10 +105,10 @@ public class ChunkInfo implements Writable {
 	public String toString() {
 		return "ChunkInfo{" +
 				"id=" + id +
+                ", hash='" + hash + '\'' +
 				", size=" + size +
 				", fileNum=" + fileNum +
 				", chunkNum=" + chunkNum +
-				", hash='" + hash + '\'' +
 				", fileName='" + fileName + '\'' +
 				", offset=" + offset +
 				", blockAddress='" + blockAddress + '\'' +

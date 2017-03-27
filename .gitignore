@@ -7,4 +7,6 @@
 .project
 /docs/~$*.docx
 docs/*.tmp
-/docs/hadoop.docx
+data/dedup/imgset
+data/dedup/urlin
+data/dedup/urlout
