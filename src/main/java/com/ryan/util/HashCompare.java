@@ -1,4 +1,4 @@
-package com.ryan.core;
+package com.ryan.util;
 
 import com.ryan.security.Digest;
 import com.ryan.security.Digests;
