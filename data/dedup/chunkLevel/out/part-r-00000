@@ -1,6 +1,0 @@
-ChunkInfo{id=1, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='0C9165C2D3696AC08655C6382D90D891', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg', offset=3}
-ChunkInfo{id=2, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='4034CFCAF3ABA44050C3A1894468F1A5', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg', offset=5}
-ChunkInfo{id=3, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='5A8FAEB864FD944C881AA49361575C1F', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg', offset=0}
-ChunkInfo{id=4, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='A3DAA975EBF35DB413516C3E3A0EFB61', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg', offset=4}
-ChunkInfo{id=5, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='EB2A783ADB5804AE50704658741A1FAA', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index1.jpg', offset=1}
-ChunkInfo{id=6, size=4096, fileNum=2, chunkNum=2, buffer=[ignore], hash='EB93890D00FFE8B245B2BC2E39E415D3', fileName='file:/root/Dev/GitHub/hadoop-dedup/data/dedup/chunkLevel/in/index2.jpg', offset=2}
