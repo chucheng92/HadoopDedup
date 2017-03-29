@@ -30,7 +30,8 @@ public class FSPCore {
             , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME, -1, Constant.DEFAULT_BLOCK_ADDRESS);
     private List<Long> list = new ArrayList<>();
 
-    public FSPCore(byte[] bytes, int chunkSize) {
+    public FSPCore(String fileName, byte[] bytes, int chunkSize) {
+        this.fileName = fileName;
         this.buffer = bytes;
         this.chunkSize = chunkSize;
     }
@@ -39,10 +40,9 @@ public class FSPCore {
         List<ChunkInfo> chunkList = new ArrayList<>();
         markChunkPostition(buffer, chunkSize);
 
-        int currentPos = this.chunkId;
-        this.chunkId++;
-
         while (true) {
+            int currentPos = this.chunkId;
+            this.chunkId++;
             if (currentPos >= list.size()) {
                 return chunkList;
             } else {
