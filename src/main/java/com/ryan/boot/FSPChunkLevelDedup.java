@@ -2,11 +2,13 @@ package com.ryan.boot;
 
 import com.ryan.core.FSPFileInputFormat;
 import com.ryan.pojo.ChunkInfo;
+import com.ryan.security.Digest;
+import com.ryan.security.Digests;
 import com.ryan.util.Constant;
 import com.ryan.util.HBaseUtil;
 import com.ryan.util.HDFSFileUtil;
-import com.ryan.util.Md5Util;
 
+import com.ryan.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.Result;
@@ -29,7 +31,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class FSPChunkLevelDedup {
     private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
-
+    private static Digest d = Digests.keccak224();
     private static final String HDFS_PATH = "hdfs://Master.Hadoop:9000/usr/local/hadoop";
 
     public static void main(String[] args) throws Exception {
@@ -69,14 +71,13 @@ public class FSPChunkLevelDedup {
         job.setInputFormatClass(FSPFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
+        log.debug("=========job end=========");
+        job.waitForCompletion(true);
+
+
         long end = System.currentTimeMillis();
 
-        log.debug("=========job end=========");
-
-        if (job.waitForCompletion(true)) {
-            log.debug("consume time:{} ", end - start);
-        }
-
+        log.debug("consume time:{} ", end - start);
         System.exit(job.isSuccessful() ? 0 : 1);
     }
 
@@ -90,11 +91,10 @@ public class FSPChunkLevelDedup {
             log.debug("================map start============");
 
             String hash = null;
-            try {
-                hash = Md5Util.getMd5(value.getBuffer());
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
+
+//                hash = StringUtils.getMd5(value.getBuffer());
+               hash = StringUtils.getKeccak(value.getBuffer());
+
             Text reduceKey = new Text(hash);
             value.setHash(hash);
 
@@ -108,8 +108,8 @@ public class FSPChunkLevelDedup {
                 preValue.append("");
             }
             String curValue = preValue.append(value.getId()).append(",").toString();
-            HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
-                    , "fileFamily", "chunksQualifier", curValue);
+//            HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
+//                    , "fileFamily", "chunksQualifier", curValue);
 
             log.info("===block file has been written to hbase successfully======");
 

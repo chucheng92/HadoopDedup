@@ -353,4 +353,9 @@ public class HBaseUtil {
             rs.close();
         }
     }
+
+    public static void main(String[] args) throws Exception {
+        String[] family = {"fileFamily", "chunksFamily"};
+        createTable("finger", family);
+    }
 }

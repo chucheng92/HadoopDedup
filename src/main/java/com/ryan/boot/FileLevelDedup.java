@@ -3,6 +3,7 @@ package com.ryan.boot;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import com.ryan.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
@@ -15,8 +16,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.GenericOptionsParser;
-
-import com.ryan.util.Md5Util;
 
 public class FileLevelDedup {
 
@@ -63,7 +62,7 @@ public class FileLevelDedup {
 				Context context) throws IOException, InterruptedException {
 			String md5 = null;
 			try {
-				md5 = Md5Util.getMd5(value.getBytes());
+				md5 = StringUtils.getMd5(value.getBytes());
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}

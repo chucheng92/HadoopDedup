@@ -1,5 +1,8 @@
 package com.ryan.util;
 
+import com.ryan.security.Digest;
+import com.ryan.security.Digests;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Ryan Tao
  * @github lemonjing
  */
-public class Md5Util {
+public class StringUtils {
     /**
      * get md5 hash from byte array
      *
@@ -26,6 +29,21 @@ public class Md5Util {
 
         return bytesToHexString(md5Bytes);
 
+    }
+
+    /**
+     * get keccak224 hash
+     *
+     * @param bytes
+     * @return
+     */
+    public static  String getKeccak(byte[] bytes) {
+        Parameters.checkNotNull(bytes);
+        Parameters.checkCondition(bytes.length >= 0);
+        Digest d = Digests.keccak224();
+        byte[] keccakBytes = d.update(bytes).digest();
+
+        return bytesToHexString(keccakBytes);
     }
 
     /**

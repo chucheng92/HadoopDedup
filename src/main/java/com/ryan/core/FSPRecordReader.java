@@ -148,6 +148,7 @@ public class FSPRecordReader extends RecordReader<IntWritable, ChunkInfo> {
         value.setHash(Constant.DEFAULT_HASH_VALUE);
         value.setFileName(fileName);
         value.setOffset(currentPos);
+        value.setBlockAddress(Constant.DEFAULT_BLOCK_ADDRESS);
 
         log.debug("==========fileName={}", fileName);
 
