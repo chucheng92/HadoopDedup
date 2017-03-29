@@ -91,6 +91,7 @@ public class FSPChunkLevelDedupWithHAFile {
 
             for (ChunkInfo val : chunkList) {
                 String hash = StringUtils.getKeccak(val.getBuffer());
+                log.debug("===========hash={}", hash);
                 context.write(new Text(hash), val);
             }
         }

@@ -26,8 +26,6 @@ public class FSPCore {
     private int chunkId;
     private byte[] tempBytes = new byte[2];
     private IntWritable key = new IntWritable(0);
-    private ChunkInfo value = new ChunkInfo(0, chunkSize, 0, 0, tempBytes
-            , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME, -1, Constant.DEFAULT_BLOCK_ADDRESS);
     private List<Long> list = new ArrayList<>();
 
     public FSPCore(String fileName, byte[] bytes, int chunkSize) {
@@ -82,13 +80,14 @@ public class FSPCore {
             bytes[i] = buffer[(int) (list.get(currentPos) + i)];
         }
 
+        ChunkInfo value = new ChunkInfo();
         value.setId(chunkId);
         value.setSize(chunkSize);
         value.setFileNum(1);
         value.setChunkNum(1);
         value.setBuffer(bytes);
         value.setHash(Constant.DEFAULT_HASH_VALUE);
-        value.setFileName(Constant.DEFAULT_FILE_NAME);
+        value.setFileName(fileName);
         value.setOffset(currentPos);
         value.setBlockAddress(Constant.DEFAULT_BLOCK_ADDRESS);
 

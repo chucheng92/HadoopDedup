@@ -54,9 +54,7 @@ public class StringUtils {
      */
     public static String bytesToHexString(byte[] bytes) {
         String hex = "";
-        System.out.println(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
-            System.out.print(byteToHexString(bytes[i]) + ":");
             hex += byteToHexString(bytes[i]);
         }
         return hex;
