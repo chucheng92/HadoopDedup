@@ -1,25 +1,21 @@
 package com.ryan.boot;
 
-import com.ryan.core.FSPFileInputFormat;
+import com.ryan.core.FSPCore;
 import com.ryan.pojo.ChunkInfo;
-import com.ryan.security.Digest;
-import com.ryan.security.Digests;
 import com.ryan.util.Constant;
-import com.ryan.util.HBaseUtil;
 import com.ryan.util.HDFSFileUtil;
 
 import com.ryan.util.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
@@ -27,11 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
-public class FSPChunkLevelDedup {
+public class FSPChunkLevelDedupWithHAFile {
     private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
-    private static Digest d = Digests.keccak224();
     private static final String HDFS_PATH = "hdfs://Master.Hadoop:9000/usr/local/hadoop";
 
     public static void main(String[] args) throws Exception {
@@ -49,26 +44,26 @@ public class FSPChunkLevelDedup {
 
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: FSPChunkLevelDedup <in> <out>");
+            System.err.println("Usage: FSPChunkLevelDedupWithHAFile <in> <out>");
             System.exit(2);
         }
 
         log.debug("=========job start=========");
 
-        Job job = new Job(conf, "Job_FSPChunkLevelDedup");
-        job.setJarByClass(FSPChunkLevelDedup.class);
-        job.setMapperClass(FSPMapper.class);
-        job.setReducerClass(FSPReducer.class);
+        Job job = new Job(conf, "Job_FSPChunkLevelDedupWithHAFile");
+        job.setJarByClass(FSPChunkLevelDedupWithHAFile.class);
+        job.setMapperClass(HAFileMapper.class);
+        job.setReducerClass(HAFileReducer.class);
 
-        FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+        FileInputFormat.addInputPath(job, new Path(otherArgs[0]));  //in:hafile
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1])); //out
 
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(ChunkInfo.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputKeyClass(NullWritable.class);
 
-        job.setInputFormatClass(FSPFileInputFormat.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
         log.debug("=========job end=========");
@@ -85,43 +80,21 @@ public class FSPChunkLevelDedup {
         LINESKIP,
     }
 
-    private static class FSPMapper extends Mapper<IntWritable, ChunkInfo, Text, ChunkInfo> {
+    private static class HAFileMapper extends Mapper<Text, BytesWritable, Text, ChunkInfo> {
         @Override
-        protected void map(IntWritable key, ChunkInfo value, Context context) throws IOException, InterruptedException {
-            log.debug("================map start============");
+        protected void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
+            log.debug("==========HAFile key={}", key);
+            byte[] bytes = value.getBytes();
+            List<ChunkInfo> chunkList = new FSPCore(bytes, Constant.DEFAULT_CHUNK_SIZE).fsp();
 
-            String hash = null;
-
-//                hash = StringUtils.getMd5(value.getBuffer());
-            hash = StringUtils.getKeccak(value.getBuffer());
-
-            Text reduceKey = new Text(hash);
-            value.setHash(hash);
-
-            StringBuilder preValue = new StringBuilder();
-            // hbase
-            Result result = HBaseUtil.getResultByQualifier(Constant.DEFAULT_HBASE_TABLE_NAME,
-                    value.getFileName(), "fileFamily", "chunksQualifier");
-            if (result != null) {
-                preValue.append(Bytes.toString(result.list().get(0).getValue()));
-            } else {
-                preValue.append("");
+            for (ChunkInfo val : chunkList) {
+                String hash = StringUtils.getKeccak(val.getBuffer());
+                context.write(new Text(hash), val);
             }
-            String curValue = preValue.append(value.getId()).append(",").toString();
-//            HBaseUtil.put(Constant.DEFAULT_HBASE_TABLE_NAME, value.getFileName()
-//                    , "fileFamily", "chunksQualifier", curValue);
-
-            log.info("===block file has been written to hbase successfully======");
-
-            context.write(reduceKey, new ChunkInfo(value.getId(), value.getSize()
-                    , value.getFileNum(), value.getChunkNum(), value.getBuffer()
-                    , value.getHash(), value.getFileName(), value.getOffset(), value.getBlockAddress()));
-
-            log.debug("=============map end============");
         }
     }
 
-    private static class FSPReducer extends Reducer<Text, ChunkInfo, Text, NullWritable> {
+    private static class HAFileReducer extends Reducer<Text, ChunkInfo, Text, NullWritable> {
         private int id = 1;
 
         @Override
@@ -172,3 +145,4 @@ public class FSPChunkLevelDedup {
         }
     }
 }
+
