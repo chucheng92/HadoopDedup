@@ -91,8 +91,10 @@ public class FSPChunkLevelDedupWithHAFile {
 
             for (ChunkInfo val : chunkList) {
                 String hash = StringUtils.getKeccak(val.getBuffer());
+                val.setHash(hash);
                 log.debug("===========hash={}", hash);
-                context.write(new Text(hash), val);
+                Text reduceKey = new Text(hash);
+                context.write(reduceKey, val);
             }
         }
     }
@@ -115,7 +117,7 @@ public class FSPChunkLevelDedupWithHAFile {
                 if (flag) {
                     fileName = chunk.getFileName();
                     offset = chunk.getOffset();
-                    buffer = chunk.getBuffer();
+                    //buffer = chunk.getBuffer();
                     try {
                         blockAddress = HDFS_PATH + "/chunk/" + key.toString() + ".blob";
                         Path chunkPath = new Path(blockAddress);
@@ -138,7 +140,7 @@ public class FSPChunkLevelDedupWithHAFile {
             chunkInfo.setSize(Constant.DEFAULT_CHUNK_SIZE);
             chunkInfo.setFileNum(fileNumCounter);
             chunkInfo.setChunkNum(chunkNumCounter);
-            chunkInfo.setBuffer(buffer);
+            //chunkInfo.setBuffer(buffer);
             chunkInfo.setHash(key.toString());
             chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
