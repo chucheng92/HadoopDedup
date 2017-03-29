@@ -85,6 +85,9 @@ public class FSPChunkLevelDedupWithHAFile {
         protected void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
             log.debug("==========HAFile key={}", key);
             byte[] bytes = value.getBytes();
+
+            log.debug("====map@bytes.len={}", bytes.length);
+
             List<ChunkInfo> chunkList = new FSPCore(key.toString(), bytes, Constant.DEFAULT_CHUNK_SIZE).fsp();
 
             log.debug("=======len@chunkList={}", chunkList.size());
