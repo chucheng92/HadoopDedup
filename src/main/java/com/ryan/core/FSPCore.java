@@ -61,8 +61,9 @@ public class FSPCore {
         Parameters.checkCondition(bytes.length > 0);
 
         log.debug("==============HAFileWay@called:markChunkPostition=========");
+        log.debug("==============bytes.len={}=========", bytes.length);
 
-        int chunkNum = (int) Math.ceil(bytes.length / (double) size);
+        //int chunkNum = (int) Math.ceil(bytes.length / (double) size);
 
         for (int i = 0; i < bytes.length; i += size) {
             // generate 4KB array
