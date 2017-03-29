@@ -141,7 +141,7 @@ public class FSPChunkLevelDedup {
                     offset = chunk.getOffset();
                     buffer = chunk.getBuffer();
                     try {
-                        blockAddress = HDFS_PATH + "/chunk/" + "id" + id + "_" + key.toString() + ".blob";
+                        blockAddress = HDFS_PATH + "/chunk/" + key.toString() + ".blob";
                         Path chunkPath = new Path(blockAddress);
                         HDFSFileUtil.createHDFSFile(chunkPath, buffer);
                     } catch (Exception e) {
