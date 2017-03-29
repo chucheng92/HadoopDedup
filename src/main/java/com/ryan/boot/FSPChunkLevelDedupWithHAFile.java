@@ -84,6 +84,8 @@ public class FSPChunkLevelDedupWithHAFile {
         @Override
         protected void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
             log.debug("==========HAFile key={}", key);
+
+            value.setCapacity(value.getLength());
             byte[] bytes = value.getBytes();
 
             log.debug("====map@bytes.len={}", bytes.length);
