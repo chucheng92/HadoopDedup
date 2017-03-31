@@ -2,9 +2,11 @@ package com.ryan.util;
 
 import com.ryan.security.Digest;
 import com.ryan.security.Digests;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 /**
  * Utility class to generate MD5
@@ -55,10 +57,16 @@ public class StringUtils {
     public static  String getSHA224(byte[] bytes) {
         Parameters.checkNotNull(bytes);
         Parameters.checkCondition(bytes.length >= 0);
-        Digest d = Digests.keccak224();
-        byte[] keccakBytes = d.update(bytes).digest();
-
-        return bytesToHexString(keccakBytes);
+        Security.addProvider(new BouncyCastlePQCProvider());
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA224");
+            md.update(bytes);
+        } catch (NoSuchAlgorithmException e) {
+            //do nothing
+        }
+        byte[] sha224Bytes = md.digest();
+        return bytesToHexString(sha224Bytes);
     }
 
     /**
