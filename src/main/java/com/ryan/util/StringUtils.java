@@ -47,6 +47,21 @@ public class StringUtils {
     }
 
     /**
+     * get keccak224 hash
+     *
+     * @param bytes
+     * @return
+     */
+    public static  String getSHA224(byte[] bytes) {
+        Parameters.checkNotNull(bytes);
+        Parameters.checkCondition(bytes.length >= 0);
+        Digest d = Digests.keccak224();
+        byte[] keccakBytes = d.update(bytes).digest();
+
+        return bytesToHexString(keccakBytes);
+    }
+
+    /**
      * byte array to hex string
      *
      * @param bytes

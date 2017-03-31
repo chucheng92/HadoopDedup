@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class FSPChunkLevelDedupWithHAFile {
@@ -122,7 +123,7 @@ public class FSPChunkLevelDedupWithHAFile {
                 if (flag) {
                     fileName = chunk.getFileName();
                     offset = chunk.getOffset();
-                    //buffer = chunk.getBuffer();
+                    buffer = chunk.getBuffer();
                     try {
                         blockAddress = HDFS_PATH + "/chunk/" + key.toString() + ".blob";
                         Path chunkPath = new Path(blockAddress);
@@ -135,8 +136,6 @@ public class FSPChunkLevelDedupWithHAFile {
                 if (!chunk.getFileName().equals(fileName)) {
                     fileNumCounter++;
                 }
-                log.debug("ChunkInfo:{}", chunk.toString());
-
                 flag = false;
             }
 
@@ -145,13 +144,15 @@ public class FSPChunkLevelDedupWithHAFile {
             chunkInfo.setSize(Constant.DEFAULT_CHUNK_SIZE);
             chunkInfo.setFileNum(fileNumCounter);
             chunkInfo.setChunkNum(chunkNumCounter);
-            //chunkInfo.setBuffer(buffer);
             chunkInfo.setHash(key.toString());
             chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
             chunkInfo.setBlockAddress(blockAddress);
             id++;
             context.write(new Text(chunkInfo.toString()), NullWritable.get());
+
+            log.debug("ChunkInfo:{}", chunkInfo.toString());
+            log.debug("==========================Reduce End==============");
         }
     }
 }
