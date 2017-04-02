@@ -2,9 +2,10 @@ package com.ryan.util;
 
 import com.ryan.security.Digest;
 import com.ryan.security.Digests;
-
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 /**
  * Utility class to generate MD5
@@ -47,6 +48,23 @@ public class StringUtils {
     }
 
     /**
+     * get keccak224 hash
+     *
+     * @param bytes
+     * @return
+     */
+    public static  String getSHA224(byte[] bytes) throws NoSuchAlgorithmException {
+        Parameters.checkNotNull(bytes);
+        Parameters.checkCondition(bytes.length >= 0);
+        Security.addProvider(new BouncyCastleProvider());
+        MessageDigest md = MessageDigest.getInstance("SHA224");
+        md.update(bytes);
+        byte[] sha224Bytes = md.digest();
+
+        return bytesToHexString(sha224Bytes);
+    }
+
+    /**
      * byte array to hex string
      *
      * @param bytes
@@ -54,9 +72,7 @@ public class StringUtils {
      */
     public static String bytesToHexString(byte[] bytes) {
         String hex = "";
-        System.out.println(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
-            System.out.print(byteToHexString(bytes[i]) + ":");
             hex += byteToHexString(bytes[i]);
         }
         return hex;

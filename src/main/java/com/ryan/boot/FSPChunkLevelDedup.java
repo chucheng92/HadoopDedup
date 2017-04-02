@@ -92,9 +92,12 @@ public class FSPChunkLevelDedup {
 
             String hash = null;
 
-//                hash = StringUtils.getMd5(value.getBuffer());
-            hash = StringUtils.getKeccak(value.getBuffer());
-
+//            hash = StringUtils.getKeccak(value.getBuffer());
+            try {
+                hash = StringUtils.getSHA224(value.getBuffer());
+            } catch (Exception e) {
+                //do nothing
+            }
             Text reduceKey = new Text(hash);
             value.setHash(hash);
 

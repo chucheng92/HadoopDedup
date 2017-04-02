@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class FSPChunkLevelDedupWithHAFile {
@@ -84,12 +85,22 @@ public class FSPChunkLevelDedupWithHAFile {
         @Override
         protected void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
             log.debug("==========HAFile key={}", key);
+
+            value.setCapacity(value.getLength());
             byte[] bytes = value.getBytes();
-            List<ChunkInfo> chunkList = new FSPCore(bytes, Constant.DEFAULT_CHUNK_SIZE).fsp();
+
+            log.debug("====map@bytes.len={}", bytes.length);
+
+            List<ChunkInfo> chunkList = new FSPCore(key.toString(), bytes, Constant.DEFAULT_CHUNK_SIZE).fsp();
+
+            log.debug("=======len@chunkList={}", chunkList.size());
 
             for (ChunkInfo val : chunkList) {
                 String hash = StringUtils.getKeccak(val.getBuffer());
-                context.write(new Text(hash), val);
+                val.setHash(hash);
+                log.debug("===========hash={}", hash);
+                Text reduceKey = new Text(hash);
+                context.write(reduceKey, val);
             }
         }
     }
@@ -125,8 +136,6 @@ public class FSPChunkLevelDedupWithHAFile {
                 if (!chunk.getFileName().equals(fileName)) {
                     fileNumCounter++;
                 }
-                log.debug("ChunkInfo:{}", chunk.toString());
-
                 flag = false;
             }
 
@@ -135,13 +144,15 @@ public class FSPChunkLevelDedupWithHAFile {
             chunkInfo.setSize(Constant.DEFAULT_CHUNK_SIZE);
             chunkInfo.setFileNum(fileNumCounter);
             chunkInfo.setChunkNum(chunkNumCounter);
-            chunkInfo.setBuffer(buffer);
             chunkInfo.setHash(key.toString());
             chunkInfo.setFileName(fileName);
             chunkInfo.setOffset(offset);
             chunkInfo.setBlockAddress(blockAddress);
             id++;
             context.write(new Text(chunkInfo.toString()), NullWritable.get());
+
+            log.debug("ChunkInfo:{}", chunkInfo.toString());
+            log.debug("==========================Reduce End==============");
         }
     }
 }

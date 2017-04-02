@@ -26,11 +26,10 @@ public class FSPCore {
     private int chunkId;
     private byte[] tempBytes = new byte[2];
     private IntWritable key = new IntWritable(0);
-    private ChunkInfo value = new ChunkInfo(0, chunkSize, 0, 0, tempBytes
-            , Constant.DEFAULT_HASH_VALUE, Constant.DEFAULT_FILE_NAME, -1, Constant.DEFAULT_BLOCK_ADDRESS);
     private List<Long> list = new ArrayList<>();
 
-    public FSPCore(byte[] bytes, int chunkSize) {
+    public FSPCore(String fileName, byte[] bytes, int chunkSize) {
+        this.fileName = fileName;
         this.buffer = bytes;
         this.chunkSize = chunkSize;
     }
@@ -39,10 +38,9 @@ public class FSPCore {
         List<ChunkInfo> chunkList = new ArrayList<>();
         markChunkPostition(buffer, chunkSize);
 
-        int currentPos = this.chunkId;
-        this.chunkId++;
-
         while (true) {
+            int currentPos = this.chunkId;
+            this.chunkId++;
             if (currentPos >= list.size()) {
                 return chunkList;
             } else {
@@ -63,8 +61,9 @@ public class FSPCore {
         Parameters.checkCondition(bytes.length > 0);
 
         log.debug("==============HAFileWay@called:markChunkPostition=========");
+        log.debug("==============bytes.len={}=========", bytes.length);
 
-        int chunkNum = (int) Math.ceil(bytes.length / (double) size);
+        //int chunkNum = (int) Math.ceil(bytes.length / (double) size);
 
         for (int i = 0; i < bytes.length; i += size) {
             // generate 4KB array
@@ -82,13 +81,14 @@ public class FSPCore {
             bytes[i] = buffer[(int) (list.get(currentPos) + i)];
         }
 
+        ChunkInfo value = new ChunkInfo();
         value.setId(chunkId);
         value.setSize(chunkSize);
         value.setFileNum(1);
         value.setChunkNum(1);
         value.setBuffer(bytes);
         value.setHash(Constant.DEFAULT_HASH_VALUE);
-        value.setFileName(Constant.DEFAULT_FILE_NAME);
+        value.setFileName(fileName);
         value.setOffset(currentPos);
         value.setBlockAddress(Constant.DEFAULT_BLOCK_ADDRESS);
 
