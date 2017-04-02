@@ -2,8 +2,7 @@ package com.ryan.util;
 
 import com.ryan.security.Digest;
 import com.ryan.security.Digests;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -54,18 +53,14 @@ public class StringUtils {
      * @param bytes
      * @return
      */
-    public static  String getSHA224(byte[] bytes) {
+    public static  String getSHA224(byte[] bytes) throws NoSuchAlgorithmException {
         Parameters.checkNotNull(bytes);
         Parameters.checkCondition(bytes.length >= 0);
-        Security.addProvider(new BouncyCastlePQCProvider());
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA224");
-            md.update(bytes);
-        } catch (NoSuchAlgorithmException e) {
-            //do nothing
-        }
+        Security.addProvider(new BouncyCastleProvider());
+        MessageDigest md = MessageDigest.getInstance("SHA224");
+        md.update(bytes);
         byte[] sha224Bytes = md.digest();
+
         return bytesToHexString(sha224Bytes);
     }
 
