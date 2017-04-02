@@ -7,7 +7,7 @@ package com.ryan.util;
  * @github lemonjing
  */
 public interface Constant {
-    int DEFAULT_CHUNK_SIZE = 4 * 1024;
+    int DEFAULT_CHUNK_SIZE = 16 * 1024;
     String DEFAULT_HASH_VALUE = "default_hash";
     String DEFAULT_FILE_NAME = "default_filename";
     String DEFAULT_HBASE_TABLE_NAME="finger";
