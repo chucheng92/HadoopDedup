@@ -1,7 +1,6 @@
 package com.ryan.security;
 
 import com.ryan.exception.CannotHappenException;
-import com.ryan.util.HDFSFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

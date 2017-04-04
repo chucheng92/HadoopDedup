@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class FSPChunkLevelDedupWithHAFile {
@@ -84,21 +83,14 @@ public class FSPChunkLevelDedupWithHAFile {
     private static class HAFileMapper extends Mapper<Text, BytesWritable, Text, ChunkInfo> {
         @Override
         protected void map(Text key, BytesWritable value, Context context) throws IOException, InterruptedException {
-            log.debug("==========HAFile key={}", key);
-
             value.setCapacity(value.getLength());
             byte[] bytes = value.getBytes();
 
-            log.debug("====map@bytes.len={}", bytes.length);
-
             List<ChunkInfo> chunkList = new FSPCore(key.toString(), bytes, Constant.DEFAULT_CHUNK_SIZE).fsp();
-
-            log.debug("=======len@chunkList={}", chunkList.size());
 
             for (ChunkInfo val : chunkList) {
                 String hash = StringUtils.getKeccak(val.getBuffer());
                 val.setHash(hash);
-                log.debug("===========hash={}", hash);
                 Text reduceKey = new Text(hash);
                 context.write(reduceKey, val);
             }
@@ -152,7 +144,6 @@ public class FSPChunkLevelDedupWithHAFile {
             context.write(new Text(chunkInfo.toString()), NullWritable.get());
 
             log.debug("ChunkInfo:{}", chunkInfo.toString());
-            log.debug("==========================Reduce End==============");
         }
     }
 }

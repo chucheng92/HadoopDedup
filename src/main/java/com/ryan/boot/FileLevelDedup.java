@@ -28,7 +28,6 @@ public class FileLevelDedup {
 			System.exit(2);
 		}
 
-
         Job job = new Job(conf, "Job_FileLevelDedup");
         job.setJarByClass(FileLevelDedup.class);
         job.setMapperClass(FileLevelDedupMapper.class);
@@ -68,8 +67,6 @@ public class FileLevelDedup {
 			}
 			Text md5Text = new Text(md5);
 
-			// output-key is md5 hash
-			// output-value is image file path
 			context.write(md5Text, key);
 		}
 	}

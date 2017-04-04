@@ -9,7 +9,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RawLocalFileSystem;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.Text;
@@ -92,7 +91,7 @@ public class ToHAFile extends Configured implements Tool {
 		protected void map(Object key, Text value, Context context)
 				throws IOException, InterruptedException {
 
-			logger.info("ToSequenceFileMapper - map method called:");
+			logger.info("ToHAFileMapper - map method called:");
 
 			String uri = value.toString();
 			Configuration conf = new Configuration();

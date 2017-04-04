@@ -27,11 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 public class FSPChunkLevelDedup {
     private static final Logger log = LoggerFactory.getLogger(FSPChunkLevelDedup.class);
-    private static Digest d = Digests.keccak224();
     private static final String HDFS_PATH = "hdfs://Master.Hadoop:9000/usr/local/hadoop";
 
     public static void main(String[] args) throws Exception {
@@ -74,7 +72,6 @@ public class FSPChunkLevelDedup {
         log.debug("=========job end=========");
         job.waitForCompletion(true);
 
-
         long end = System.currentTimeMillis();
 
         log.debug("consume time:{} ", end - start);
@@ -91,7 +88,6 @@ public class FSPChunkLevelDedup {
             log.debug("================map start============");
 
             String hash = null;
-
 //            hash = StringUtils.getKeccak(value.getBuffer());
             try {
                 hash = StringUtils.getSHA224(value.getBuffer());
