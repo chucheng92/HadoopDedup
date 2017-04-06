@@ -23,57 +23,46 @@ public class HashCompare {
     private static final Logger log = LoggerFactory.getLogger(HashCompare.class);
 
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-//        File file1 = new File("src/main/resources/hamlet1.txt");
-//        byte[] bytes1 = transformToBytes(file1);
+        File file1 = new File("src/main/resources/gede.txt");
+        byte[] bytes1 = transformToBytes(file1);
 //        File file2 = new File("src/main/resources/hamlet2.txt");
 //        byte[] bytes2 = transformToBytes(file2);
 //        Digest d1 = Digests.md5();
 //        Digest d2 = Digests.sha1();
 //        Digest d3 = Digests.sha256();
-//        Digest d4 = Digests.keccak224();
+        Digest d4 = Digests.keccak224();
 //        Digest d5 = Digests.keccak256();
 //        Digest d6 = Digests.keccak384();
 //        Digest d7 = Digests.keccak512();
 //
-//        // run time sha224
-//        long startTime = System.currentTimeMillis();
-//        // bouncy castle SHA224
-//        for (int i = 0; i < 100; i++) {
-//            Security.addProvider(new BouncyCastlePQCProvider());
-//            try {
-//                MessageDigest md = MessageDigest.getInstance("SHA224");
-//                md.update(bytes1);
-//                byte[] sha224Bytes = md.digest();
-//            } catch (NoSuchAlgorithmException e) {
-//                //do nothing
-//            }
-//        }
-//
-//        long endTime = System.currentTimeMillis();
-//        double res = (endTime - startTime) * 1.0/ 100;
-//        System.out.println("run time@sha224:" + res);
-//
-//        // run time keccak224
-//        long startTime2 = System.currentTimeMillis();
-//        for (int i = 0; i < 100; i++) {
-//            d4.update(bytes1);
-//            byte[] keccak224Bytes = d4.digest();
-//        }
-//        long endTime2 = System.currentTimeMillis();
-//        double res2 = (endTime2 - startTime2) * 1.0/ 100;
-//        System.out.println("run time@keccak224:" + res2);
-
-
-        byte[] bytes1 = "Hello".getBytes();
-        Security.addProvider(new BouncyCastleProvider());
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-224");
-            md.update(bytes1);
-            byte[] sha224Bytes = md.digest();
-            System.out.println(StringUtils.bytesToHexString(sha224Bytes));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        // run time sha224
+        long startTime = System.currentTimeMillis();
+        // bouncy castle SHA224
+        for (int i = 0; i < 100; i++) {
+            Security.addProvider(new BouncyCastleProvider());
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA224");
+                md.update(bytes1);
+                byte[] sha224Bytes = md.digest();
+            } catch (NoSuchAlgorithmException e) {
+                //do nothing
+            }
         }
+
+        long endTime = System.currentTimeMillis();
+        double res = (endTime - startTime) * 1.0/ 100;
+        System.out.println("run time@sha224:" + res);
+
+        // run time keccak224
+        long startTime2 = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            d4.update(bytes1);
+            byte[] keccak224Bytes = d4.digest();
+        }
+        long endTime2 = System.currentTimeMillis();
+        double res2 = (endTime2 - startTime2) * 1.0/ 100;
+        System.out.println("run time@keccak224:" + res2);
+
     }
 
 
