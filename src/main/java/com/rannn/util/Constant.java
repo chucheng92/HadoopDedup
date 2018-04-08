@@ -1,0 +1,15 @@
+package com.rannn.util;
+
+/**
+ * default parameters
+ *
+ * @author Rannn Tao
+ * @github lemonjing
+ */
+public interface Constant {
+    int DEFAULT_CHUNK_SIZE = 16 * 1024;
+    String DEFAULT_HASH_VALUE = "default_hash";
+    String DEFAULT_FILE_NAME = "default_filename";
+    String DEFAULT_HBASE_TABLE_NAME = "finger";
+    String DEFAULT_BLOCK_ADDRESS = "file:///default_block_address";
+}
